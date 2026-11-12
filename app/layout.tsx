@@ -2,7 +2,7 @@ import { existsSync } from "node:fs"
 import { join } from "node:path"
 import type { ReactNode } from "react"
 import type { Metadata, Viewport } from "next"
-import { Caveat, Cormorant, Hanken_Grotesk } from "next/font/google"
+import { Caveat, Cormorant, Hanken_Grotesk, Parisienne } from "next/font/google"
 import "./globals.css"
 import SmoothScroll from "@/components/smooth-scroll"
 import RevealRescan from "@/components/reveal-rescan"
@@ -15,8 +15,10 @@ import { siteUrl } from "@/lib/site"
 // Hanken Grotesk for text: warm, clean, quiet.
 const display = Cormorant({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-display", display: "swap" })
 const sans = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
-// A hand, used sparingly, for the notes and timestamps her own covers write by hand.
+// A pen hand for notes and annotations, the way her covers write by hand.
 const hand = Caveat({ subsets: ["latin"], variable: "--font-hand", display: "swap" })
+// A flowing script for cover-style titles ("Café hopping", "grwm in phuket").
+const script = Parisienne({ subsets: ["latin"], weight: "400", variable: "--font-script", display: "swap" })
 
 const title = `${site.wordmark || site.handle}, UGC creator${site.location ? ` in ${site.location}` : ""}`
 const description = site.tagline || "UGC creator portfolio."
@@ -36,7 +38,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#faf8f5",
+  themeColor: "#fdf4ec",
 }
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
@@ -45,7 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <head>
         <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOTSTRAP }} />
       </head>
-      <body className={`${sans.variable} ${display.variable} ${hand.variable} font-sans`}>
+      <body className={`${sans.variable} ${display.variable} ${hand.variable} ${script.variable} font-sans`}>
         <SmoothScroll>{children}</SmoothScroll>
         <RevealRescan />
       </body>

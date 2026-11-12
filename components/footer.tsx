@@ -5,13 +5,15 @@ import { site } from "@/content/site"
 
 const platform = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube" } as const
 
+/** 00:00. Goodnight: the moon up, her wordmark too big for the page, a fish swimming across it. */
 export default function Footer() {
   return (
-    <footer id="goodnight" data-time="00:00" data-moment="Goodnight" data-light="night" className="relative overflow-hidden bg-[#242221] text-accent-fg">
+    <footer id="goodnight" data-time="00:00" data-moment="Goodnight" data-light="night" className="relative overflow-hidden bg-ink text-accent-fg">
       <div className="shell pb-10 pt-20 md:pt-28">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-6">
-            <p className="font-display text-[2.6rem] font-light italic leading-none">{site.wordmark || site.handle}</p>
+            <p className="font-script text-[3.4rem] leading-none text-lamp">goodnight</p>
+            <p className="mt-4 font-display text-[2.1rem] font-light italic leading-none">{site.wordmark || site.handle}</p>
             <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-accent-fg/65">
               {site.tagline}. Open to brand work: send a brief and I&apos;ll come back to you.
             </p>

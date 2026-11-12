@@ -77,6 +77,8 @@ export type Video = {
   ratio?: "9/16" | "3/4"
   /** Where to watch it while there is no file or embed. */
   href?: string
+  /** Where it was filmed, as her cover or caption says it (travel tickets). */
+  place?: string
 }
 
 /** A content pillar; on the site, one portfolio tab, filed under a time of day. */
@@ -86,13 +88,20 @@ export type Pillar = { id: string; time: string; tab: string; name: string; desc
 export type Angle = { title: string; body: string }
 export type Brand = { name: string; logo?: string; url?: string }
 export type CaseStudy = { brand: string; brief: string; delivered: string; result?: string; videoId?: string }
-export type Service = { name: string; description: string; includes?: string[] }
-export type Package = { name: string; description: string; includes: string[]; price?: string; highlight?: boolean }
+/** `videoId`: a video of hers that shows what the service looks like. */
+export type Service = { name: string; description: string; includes?: string[]; videoId?: string }
+/** `addOn`: an extra that goes with any package rather than a size of order. */
+export type Package = { name: string; description: string; includes: string[]; price?: string; highlight?: boolean; addOn?: boolean }
 export type UsageTier = { name: string; description: string; term?: string; price?: string }
 export type Step = { title: string; description: string; duration?: string }
 export type Testimonial = { quote: string; name: string; role?: string; brand?: string }
 export type Faq = { q: string; a: string }
 export type Booking = { email: string; formEndpoint?: string; calendar?: string; responseTime?: string }
+/**
+ * One frame of a video of hers, marked up: the stage it plays, why it sells,
+ * and where on the cover to look (`mark`, in percent of the cover).
+ */
+export type Frame = { videoId: string; stage: string; title: string; body: string; note: string; mark: { x: number; y: number; w: number; h: number } }
 
 export type Content = {
   /** Her name as brands should address her. */
@@ -116,6 +125,12 @@ export type Content = {
   stats: Stat[]
   audience: Stat[]
   videos: Video[]
+  /** The hero's stories: video ids, played in order. */
+  stories: string[]
+  /** How her videos sell, as marked-up frames. */
+  anatomy: Frame[]
+  /** Solo frames for the About's photo-booth strip: images in public/. */
+  booth: string[]
   brands: Brand[]
   caseStudies: CaseStudy[]
   services: Service[]
@@ -211,7 +226,7 @@ export const content: Content = {
     { id: "olens", pillar: "beauty", title: "OLENS Cherry Moon Brown", format: "review", brand: "OLENS", poster: "/work/olens.jpg", ratio: "3/4", result: `21.8K ${VIEWS}`, href: TIKTOK },
     { id: "korean-makeover", pillar: "beauty", title: "Come with me to get a Korean makeover", format: "transformation", poster: "/work/korean-makeover.jpg", ratio: "3/4", result: `15.3K ${VIEWS}`, href: TIKTOK },
     { id: "skincare", pillar: "beauty", title: "Lazy-girl skincare with Aestura", format: "tutorial", brand: "Aestura", poster: "/work/skincare.jpg", ratio: "3/4", result: `2,647 ${VIEWS}`, href: TIKTOK },
-    { id: "phuket-grwm", pillar: "beauty", title: "GRWM in Phuket: pink makeup", format: "grwm", poster: "/work/phuket-grwm.jpg", ratio: "3/4", result: `1,769 ${VIEWS}`, href: TIKTOK },
+    { id: "phuket-grwm", pillar: "beauty", title: "GRWM in Phuket: pink makeup", format: "grwm", poster: "/work/phuket-grwm.jpg", ratio: "3/4", result: `1,769 ${VIEWS}`, href: TIKTOK, place: "Phuket" },
     { id: "medicube", pillar: "beauty", title: "My Medicube undereye routine", format: "tutorial", brand: "Medicube", poster: "/work/medicube.jpg", ratio: "3/4", result: `802 ${VIEWS}`, href: TIKTOK },
 
     { id: "campus-diml", pillar: "food", title: "A day in my life on campus", format: "vlog", embed: "https://www.tiktok.com/@thiriiiii/video/7683835885170871573" },
@@ -221,6 +236,8 @@ export const content: Content = {
     { id: "korean-restaurant", pillar: "food", title: "A Korean restaurant, walked through", format: "walkthrough", poster: "/work/korean-restaurant.jpg", ratio: "3/4", result: `1,630 ${VIEWS}`, href: TIKTOK },
 
     { id: "charles-keith", pillar: "fashion", title: "Charles & Keith", format: "lifestyle", brand: "Charles & Keith", embed: "https://www.tiktok.com/@thiriiiii/video/7688571066100321556" },
+    // [capture] This cover keeps its bottom edge: her code "<88KATE> for 15% off" is on it
+    // (TikTok's view counter, which sat beside it, is painted out).
     { id: "shein-polka", pillar: "fashion", title: "Polka-dot fits with SHEIN", format: "haul", brand: "SHEIN", poster: "/work/shein-polka.jpg", ratio: "3/4", result: `24.9K ${VIEWS}`, href: TIKTOK },
     { id: "soundpeats", pillar: "fashion", title: "OOTD featuring Soundpeats Space", format: "lifestyle", brand: "Soundpeats", poster: "/work/soundpeats.jpg", ratio: "3/4", result: `15.9K ${VIEWS}`, href: TIKTOK },
     { id: "shein-store", pillar: "fashion", title: "At the SHEIN store", format: "walkthrough", brand: "SHEIN", poster: "/work/shein-store.jpg", ratio: "3/4", result: `12.4K ${VIEWS}`, href: TIKTOK },
@@ -230,15 +247,48 @@ export const content: Content = {
     { id: "night-out", pillar: "fashion", title: "A night-out outfit", format: "lifestyle", poster: "/work/red-dress.jpg", ratio: "3/4", result: `817.5K ${VIEWS}`, href: TIKTOK },
 
     { id: "clifftop", pillar: "travel", title: "Clifftop views", format: "vlog", poster: "/work/clifftop.jpg", ratio: "3/4", result: `53.6K ${VIEWS}`, href: TIKTOK },
-    { id: "bangkok", pillar: "travel", title: "When you cannot beat the traffic in Bangkok", format: "vlog", poster: "/work/bangkok.jpg", ratio: "3/4", result: `25.2K ${VIEWS}`, href: TIKTOK },
-    { id: "sapa", pillar: "travel", title: "Ho Chi Minh to Sapa, edited like a horror movie", format: "vlog", poster: "/work/sapa.jpg", ratio: "3/4", result: `11.7K ${VIEWS}`, href: TIKTOK },
+    { id: "bangkok", pillar: "travel", title: "When you cannot beat the traffic in Bangkok", format: "vlog", poster: "/work/bangkok.jpg", ratio: "3/4", result: `25.2K ${VIEWS}`, href: TIKTOK, place: "Bangkok" },
+    { id: "sapa", pillar: "travel", title: "Ho Chi Minh to Sapa, edited like a horror movie", format: "vlog", poster: "/work/sapa.jpg", ratio: "3/4", result: `11.7K ${VIEWS}`, href: TIKTOK, place: "Ho Chi Minh to Sapa" },
     { id: "island-boat", pillar: "travel", title: "An island boat day", format: "vlog", poster: "/work/phi-phi.jpg", ratio: "3/4", result: `7,529 ${VIEWS}`, href: TIKTOK },
-    { id: "phu-quoc", pillar: "travel", title: "A chaotic day in Phu Quoc", format: "vlog", poster: "/work/phu-quoc.jpg", ratio: "3/4", result: `2,244 ${VIEWS}`, href: TIKTOK },
+    { id: "phu-quoc", pillar: "travel", title: "A chaotic day in Phu Quoc", format: "vlog", poster: "/work/phu-quoc.jpg", ratio: "3/4", result: `2,244 ${VIEWS}`, href: TIKTOK, place: "Phu Quoc" },
 
     // [capture] 1.5M views. The brief says her Juno Hair transformation passed 1.5M;
     // nothing on this cover confirms it is that video, so it carries no title claim.
     { id: "top-video", title: "My most-viewed TikTok", format: "lifestyle", poster: "/work/top-video.jpg", ratio: "3/4", result: `1.5M ${VIEWS}`, href: TIKTOK, featured: true },
   ],
+  // [site] The hero's stories: one cover per pillar, then her two most-viewed.
+  stories: ["glow-recipe", "cafe-hopping", "shein-polka", "clifftop", "night-out", "top-video"],
+  // [site] How her videos sell, on three of her real covers. [capture] What each
+  // cover shows: the on-screen line, the Aestura tube held to camera, her code.
+  // [James] The first and last headings are his angles.
+  anatomy: [
+    {
+      videoId: "bangkok",
+      stage: "The hook",
+      title: "Hooks that stop the scroll.",
+      body: "A line on screen you have to finish, and transformations and transitions for hair, makeup and outfits, built around the first second.",
+      note: "a line you have to finish reading",
+      mark: { x: 8, y: 75, w: 85, h: 21 },
+    },
+    {
+      videoId: "skincare",
+      stage: "The product",
+      title: "The product, in my hands.",
+      body: "Label to camera, inside the routine itself rather than cut in after it.",
+      note: "label to camera",
+      mark: { x: 16, y: 59, w: 58, h: 40 },
+    },
+    {
+      videoId: "shein-polka",
+      stage: "The call to action",
+      title: "Fluent in the mega-sales.",
+      body: "E-commerce and K-beauty campaigns around the big sales: hauls, demos and first looks.",
+      note: "my code, on screen",
+      mark: { x: 52, y: 88, w: 42, h: 12 },
+    },
+  ],
+  // [capture] Solo frames from her own covers for the photo-booth strip, for her approval.
+  booth: ["/work/portrait.jpg", "/work/glow-recipe.jpg", "/work/medicube.jpg", "/work/top-video.jpg"],
   // [James] Her brand partners. None shows a paid-partnership label in the
   // captures (only Aestura is named on a cover); confirm each one with Kate.
   brands: [
@@ -255,19 +305,20 @@ export const content: Content = {
   caseStudies: [],
   // [James] What she offers.
   services: [
-    { name: "Short-form video", description: "9:16, 15 to 45 seconds, for feeds and ads." },
-    { name: "Day-in-my-life integrations", description: "Your product, woven into a day in my life." },
-    { name: "Transformation and transition reels", description: "Hair, makeup and outfits, from before to after." },
-    { name: "Voiceover reviews and unboxings", description: "My voice over your product, from first look to verdict." },
-    { name: "Venue walkthroughs", description: "F&B, salons and retail pop-ups, the way you'd walk in." },
-    { name: "Lifestyle and product stills", description: "Photos for your feed, product pages and ads." },
+    // [site] Each one's example is a video of hers that shows it.
+    { name: "Short-form video", description: "9:16, 15 to 45 seconds, for feeds and ads.", videoId: "glow-recipe" },
+    { name: "Day-in-my-life integrations", description: "Your product, woven into a day in my life.", videoId: "cafe-hopping" },
+    { name: "Transformation and transition reels", description: "Hair, makeup and outfits, from before to after.", videoId: "korean-makeover" },
+    { name: "Voiceover reviews and unboxings", description: "My voice over your product, from first look to verdict.", videoId: "olens" },
+    { name: "Venue walkthroughs", description: "F&B, salons and retail pop-ups, the way you'd walk in.", videoId: "korean-restaurant" },
+    { name: "Lifestyle and product stills", description: "Photos for your feed, product pages and ads.", videoId: "montigo" },
   ],
   // [James] Rates on request until she sets them.
   packages: [
     { name: "Single video", description: "One 9:16 video.", includes: ["1 video"], price: "On request" },
     { name: "3-video bundle", description: "Three videos, for testing hooks and angles.", includes: ["3 videos"], price: "On request", highlight: true },
     { name: "Monthly retainer", description: "Ongoing content, every month.", includes: ["Videos every month"], price: "On request" },
-    { name: "Photography add-on", description: "Lifestyle and product stills, with any package.", includes: ["Stills"], price: "On request" },
+    { name: "Photography add-on", description: "Lifestyle and product stills, with any package.", includes: ["Stills"], price: "On request", addOn: true },
   ],
   usage: [],
   process: [],
@@ -320,6 +371,11 @@ export const SAMPLE: Content = {
     { id: "sample-5", title: "Three openings, one ad", format: "hooks", brand: "Brand Five", duration: "0:04" },
     { id: "sample-6", title: "In her voice", format: "voiceover", brand: "Brand Six", duration: "0:04" },
     { id: "sample-7", title: "An embedded post", format: "lifestyle", embed: "https://www.tiktok.com/@handle/video/0000000000000000000" },
+  ],
+  stories: ["sample-1", "sample-2", "sample-3"],
+  booth: [],
+  anatomy: [
+    { videoId: "sample-1", stage: "The hook", title: "A reason brands book her.", body: "One line on why this frame works.", note: "what to look at", mark: { x: 10, y: 70, w: 80, h: 20 } },
   ],
   brands: [{ name: "Brand One" }, { name: "Brand Two" }, { name: "Brand Three" }, { name: "Brand Four" }, { name: "Brand Five" }, { name: "Brand Six" }],
   caseStudies: [

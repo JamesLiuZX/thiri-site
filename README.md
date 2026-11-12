@@ -2,7 +2,20 @@
 
 A portfolio for a UGC creator (Instagram [@thiriiii_](https://www.instagram.com/thiriiii_/), TikTok [@thiriiiii](https://www.tiktok.com/@thiriiiii)), built for the people who hire her: brands and agencies. A static Next.js 15 site (App Router, `output: "export"`), Tailwind 3, pnpm, Node 22, with a printable media kit at `/media-kit`.
 
-**Status: built, awaiting her approval.** The site is told as *a day in her life*: her signature format is the day-in-the-life vlog, so the page keeps time. The cover sits at 07:30, the work is filed by hour (08:00 Beauty & Hair, 12:30 F&B & Lifestyle, 17:30 Fashion & E-commerce, the weekend's Travel), the menu is in the afternoon, the About at golden hour, and booking after dark. Each section is lit for its hour, and a vlog timestamp in the corner follows the reader. See [docs/directions.md](docs/directions.md).
+**Status: v3 built, awaiting her approval.** The page is one day of hers, from first light to goodnight, and the light moves with the scroll: the sky turns from dawn blush to sea-glass noon, golden hour and night ink, the sun's glow crosses the page, window-light shadows lean across it, and a small sun (then moon) travels an arc in the corner. The colours come from her own covers. No two sections share a layout:
+
+- **07:30:** her stories playing over her masthead, with her stats as story stickers.
+- **09:00:** "Trusted by" as a sheet of die-cut stickers.
+- **12:00:** her camera roll, edge to edge, with albums.
+- **14:00:** three of her covers marked up in pen: the hook, the product, the call to action.
+- **15:30:** the services as an order you build in a shopping bag, which writes the brief.
+- **16:45:** the process as a notebook shot list.
+- **18:00:** weekends away as ticket stubs at golden hour.
+- **18:45:** a photo-booth strip, a letter and a card.
+- **20:30:** the FAQ answered in the comments.
+- **22:30:** booking as one sentence to fill in, under the moon.
+
+See [docs/directions.md](docs/directions.md). The version before v3 is kept for comparison on the branch `archive/2026-11-12-day-clock`.
 
 Content comes from two sources, and every fact is for Kate to confirm before launch:
 
@@ -70,6 +83,8 @@ Questions for Kate:
 - [ ] Naming her university, and whether couple content belongs on the site (both are off by default).
 - [ ] Usage rights, process and turnaround, FAQ answers, audience figures, and rates (or "on request").
 - [ ] The posters and portrait cropped from her profile, the cover titles, and the site copy.
+- [ ] Her SHEIN code. The marked-up call-to-action frame shows the cover with "<88KATE> for 15% off" on it, with TikTok's view counter painted out. Is it still fine to show?
+- [ ] The marked-up frames' notes and headings, the solo frames in the photo-booth strip, and which covers play as stories.
 
 Then:
 
@@ -84,12 +99,16 @@ On Vercel, import the repository at vercel.com/new. Next.js is detected and no s
 
 | Where | What |
 | --- | --- |
-| `app/page.tsx` | The day: cover (07:30), Trusted by, the work by hour, why brands book her, the menu, process, About (golden hour), FAQ, booking (22:30). Case studies and testimonials appear once they are real |
-| `components/day-clock.tsx` | The vlog timestamp that keeps the page's time, and opens the day's running order |
-| `components/work/portfolio.tsx` | The portfolio tabs (one per pillar, by hour) and their reels; "Everything" is the moodboard |
+| `app/page.tsx` | The day, in order. Case studies and testimonials (`components/extras.tsx`) appear once they are real |
+| `components/day.tsx` | The day's light: sky, glows, window light, stars, and the sun-to-moon arc with the running order |
+| `components/hero.tsx`, `components/hero/stories.tsx` | The masthead, her covers as stories, the stats as story stickers |
+| `components/stickers.tsx` | Trusted by, as die-cut stickers in the site's type |
+| `components/work/camera-roll.tsx` | The camera roll and its albums; `player-dialog.tsx` is the one player for the page |
+| `components/anatomy.tsx` | The marked-up covers (`content.anatomy`) |
+| `components/order.tsx` | The order and the bag; `components/providers.tsx` shares it with the booking sentence and the bar |
+| `components/storyboard.tsx`, `tickets.tsx`, `about.tsx`, `comments.tsx` | Shot list, weekends, the booth and letter, the FAQ thread |
+| `components/booking.tsx` | The sentence to fill in: composes an email, or posts to `booking.formEndpoint` |
 | `app/media-kit/` | The printable media kit, built from the same content |
-| `components/work/` | The 9:16 gallery, tiles and the shared player dialog |
-| `components/booking.tsx` | "Build your brief": composes an email, or posts to `booking.formEndpoint` |
 | `lib/embeds.ts` | TikTok and Instagram post URLs to official embed URLs |
 | `scripts/check-content.mjs` | The content report and launch check |
 | `lib/reveal-script.ts`, `components/rise.tsx` | Motion primitives (CSS-first, reduced-motion safe) |

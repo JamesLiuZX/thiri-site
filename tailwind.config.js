@@ -12,6 +12,7 @@ module.exports = {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "Georgia", "serif"],
         hand: ["var(--font-hand)", "cursive"],
+        script: ["var(--font-script)", "cursive"],
       },
       colors: {
         bg: token("bg"),
@@ -28,6 +29,12 @@ module.exports = {
         peach: token("peach"),
         night: token("night"),
         lamp: token("lamp"),
+        berry: token("berry"),
+        bubble: token("bubble"),
+        sea: token("sea"),
+        honey: token("honey"),
+        rec: token("rec"),
+        ink: token("ink"),
       },
       boxShadow: {
         print: "0 1px 1px rgba(43,33,28,0.06), 0 14px 30px -14px rgba(43,33,28,0.35)",

@@ -3,11 +3,13 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   A day in her life
+   A day of hers, from first light to goodnight
    James's steer (warm cream, soft blush, muted sage, espresso; an editorial
-   serif with a clean sans), tuned against her feed: the warm indoor light of
-   her GRWMs, golden hour on her trips, late-night supper. The page keeps
-   time: each section is lit for its hour, from morning cream to night.
+   serif with a clean sans), carried through one day whose light comes from
+   her own covers: the blush of her pink-makeup GRWMs at dawn, the sea glass
+   of her island days at noon, café latte in the afternoon, the apricot of
+   golden-hour beaches, rose sparkles at dusk, espresso ink by night.
+   components/day.tsx moves the light as the reader scrolls.
    ========================================================================== */
 
 @layer base {
@@ -20,20 +22,46 @@
     --line: 228 221 214;
     --accent: 44 42 41;
     --accent-fg: 250 248 245;
-    --rose: 196 152 140; /* deep blush, decoration */
+    --rose: 196 152 140;
     --blush: 232 213 206; /* #E8D5CE */
     --sage: 197 209 200; /* #C5D1C8 */
-    --fish: 128 151 136; /* deep sage, the fish */
-    --peach: 246 228 211; /* golden hour */
+    --fish: 128 151 136;
+    --peach: 246 228 211;
     --night: 44 42 41;
     --lamp: 233 201 168; /* a warm lamp at night */
+    /* From her covers. */
+    --berry: 201 72 124; /* her pink cover type, for pen and marker */
+    --bubble: 247 197 214; /* sticker pink */
+    --sea: 150 208 203; /* her island boat day */
+    --honey: 240 190 120; /* golden hour */
+    --rec: 226 62 58; /* the REC dot */
+    --ink: 31 27 30; /* night */
+
+    /* The hour, written by components/day.tsx; dawn until it runs. */
+    --sky-1: 246 217 207;
+    --sky-2: 250 232 222;
+    --sky-3: 253 244 236;
+    --dark: 0;
+    --light: 0.85;
+    --light-drift: 26vw;
+    --light-skew: 28deg;
+    --light-tilt: -5deg;
+    --glow-0: 1;
+    --glow-1: 0;
+    --glow-2: 0;
+    --glow-3: 0;
+    --sun-x: 5vw;
+    --sun-y: 75vh;
+
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+    --spring: cubic-bezier(0.34, 1.45, 0.64, 1);
   }
 
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-padding-top: 5rem;
+    background: rgb(var(--sky-3));
   }
 
   html:not(.lenis) {
@@ -50,10 +78,11 @@
   }
 
   body {
-    background: rgb(var(--bg));
+    background: transparent;
     color: rgb(var(--fg));
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: clip;
   }
 
   /* Fine film grain over the page, static, so it never repaints. */
@@ -63,7 +92,7 @@
     inset: 0;
     z-index: 70;
     pointer-events: none;
-    opacity: 0.06;
+    opacity: 0.055;
     background-size: 220px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.17 0 0 0 0 0.13 0 0 0 0 0.11 0 0 0 0.75 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
@@ -75,12 +104,12 @@
   }
 
   ::selection {
-    background: rgb(var(--blush));
+    background: rgb(var(--bubble));
     color: rgb(var(--fg));
   }
 
   :focus-visible {
-    outline: 1.5px solid rgb(var(--fg));
+    outline: 1.5px solid currentColor;
     outline-offset: 3px;
     border-radius: 6px;
   }
@@ -101,7 +130,6 @@
     @apply mx-auto w-full max-w-[1240px] px-5 md:px-10;
   }
 
-  /* Small spaced capitals, in the text face. */
   .label {
     @apply font-sans text-[10.5px] font-medium uppercase tracking-[0.22em];
   }
@@ -118,6 +146,10 @@
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-fg/20 px-6 py-3.5 text-[14px] transition-colors duration-300 hover:border-fg/50;
   }
 
+  .btn-lamp {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-lamp px-6 py-3.5 text-[14px] font-semibold text-ink transition-[transform,opacity] duration-300 hover:opacity-90 active:scale-[0.98] disabled:opacity-60;
+  }
+
   /* An underline that slides away on hover. */
   .link {
     background-image: linear-gradient(currentColor, currentColor);
@@ -132,24 +164,199 @@
     background-position: 100% 100%;
   }
 
-  /* An instant print: paper border, a deeper foot for the caption. */
+  /* An instant print (the hidden case studies use it). */
   .print {
     @apply relative block bg-surface p-[7%] pb-[22%] shadow-print;
   }
 
-  /* A strip of washi tape, laid over a corner. */
+  /* A strip of washi tape. */
   .tape {
-    @apply pointer-events-none absolute h-[11%] w-[42%] bg-blush/70;
+    @apply pointer-events-none absolute h-[11%] w-[42%] bg-blush/75;
     clip-path: polygon(3% 0, 97% 6%, 100% 50%, 97% 96%, 2% 100%, 0 52%);
     box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
   }
 }
 
 /* ==========================================================================
+   The day's light (components/day.tsx)
+   Behind the page: the sky, three moving glows (dawn, noon, golden hour),
+   the night lamp and the stars. Over it: window light, then the grain.
+   Only transforms and opacity change per frame, except the sky's colour.
+   ========================================================================== */
+
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(var(--sky-1)) 0%, rgb(var(--sky-2)) 52%, rgb(var(--sky-3)) 100%);
+}
+
+.glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: -2;
+  width: 130vmax;
+  height: 130vmax;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate3d(calc(var(--sun-x) - 65vmax), calc(var(--sun-y) - 65vmax), 0);
+  will-change: transform, opacity;
+}
+
+.glow-dawn {
+  opacity: var(--glow-0);
+  background: radial-gradient(closest-side, rgb(255 190 172 / 0.7), rgb(255 212 196 / 0.22) 45%, transparent 72%);
+}
+
+.glow-noon {
+  opacity: var(--glow-1);
+  background: radial-gradient(closest-side, rgb(255 255 244 / 0.85), rgb(255 252 236 / 0.25) 45%, transparent 72%);
+}
+
+.glow-gold {
+  opacity: var(--glow-2);
+  background: radial-gradient(closest-side, rgb(255 184 110 / 0.62), rgb(255 205 150 / 0.22) 45%, transparent 72%);
+}
+
+.glow-lamp {
+  position: fixed;
+  right: -22vmax;
+  top: -28vmax;
+  z-index: -2;
+  width: 84vmax;
+  height: 84vmax;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: var(--glow-3);
+  background: radial-gradient(closest-side, rgb(var(--lamp) / 0.3), rgb(var(--lamp) / 0.08) 50%, transparent 72%);
+}
+
+.stars {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--dark);
+  background-image:
+    radial-gradient(1.2px 1.2px at 8% 14%, #fff 70%, transparent),
+    radial-gradient(1px 1px at 18% 38%, #fff 70%, transparent),
+    radial-gradient(1.4px 1.4px at 27% 9%, #fff 70%, transparent),
+    radial-gradient(1px 1px at 36% 27%, #fff 70%, transparent),
+    radial-gradient(1.2px 1.2px at 47% 12%, #fff 70%, transparent),
+    radial-gradient(1px 1px at 55% 33%, #fff 70%, transparent),
+    radial-gradient(1.5px 1.5px at 63% 7%, #fff 70%, transparent),
+    radial-gradient(1px 1px at 71% 24%, #fff 70%, transparent),
+    radial-gradient(1.2px 1.2px at 79% 41%, #fff 70%, transparent),
+    radial-gradient(1px 1px at 88% 16%, #fff 70%, transparent),
+    radial-gradient(1.3px 1.3px at 94% 33%, #fff 70%, transparent),
+    radial-gradient(1px 1px at 13% 58%, #fff 70%, transparent),
+    radial-gradient(1px 1px at 42% 52%, #fff 70%, transparent),
+    radial-gradient(1.2px 1.2px at 68% 61%, #fff 70%, transparent),
+    radial-gradient(1px 1px at 91% 66%, #fff 70%, transparent);
+}
+
+.stars::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.6px 1.6px at 22% 21%, #fff 70%, transparent),
+    radial-gradient(1.4px 1.4px at 58% 18%, #fff 70%, transparent),
+    radial-gradient(1.6px 1.6px at 84% 8%, #fff 70%, transparent),
+    radial-gradient(1.3px 1.3px at 33% 45%, #fff 70%, transparent);
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.window-light {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  opacity: var(--light);
+  transform: translate3d(var(--light-drift), 0, 0) rotate(var(--light-tilt)) skewX(var(--light-skew));
+  transform-origin: 50% 0;
+  will-change: transform, opacity;
+}
+
+@media (max-width: 767.98px) {
+  .window-light {
+    opacity: calc(var(--light) * 0.75);
+  }
+}
+
+/* The bar and the arc in the corner take on the hour. */
+.site-nav {
+  background: rgb(var(--sky-1) / 0.72);
+  border-color: rgb(var(--fg) / 0.07);
+  color: rgb(var(--fg));
+}
+
+.nav-links {
+  opacity: 0.62;
+}
+
+.nav-book {
+  background: rgb(var(--fg));
+  color: rgb(var(--accent-fg));
+}
+
+.day-arc {
+  background: rgb(var(--surface) / 0.88);
+  color: rgb(var(--fg));
+}
+
+.day-arc-sun {
+  fill: rgb(var(--honey));
+  stroke: rgb(var(--surface));
+  stroke-width: 1.5;
+  transition: fill 0.6s ease;
+}
+
+html[data-daypart="night"] .site-nav {
+  background: rgb(var(--ink) / 0.72);
+  border-color: rgb(255 255 255 / 0.08);
+  color: rgb(var(--accent-fg));
+}
+
+html[data-daypart="night"] .nav-book {
+  background: rgb(var(--lamp));
+  color: rgb(var(--ink));
+}
+
+html[data-daypart="night"] .day-arc {
+  background: rgb(var(--ink) / 0.85);
+  color: rgb(var(--accent-fg));
+}
+
+html[data-daypart="night"] .day-arc-sun {
+  fill: #f6ecd8;
+  stroke: rgb(var(--ink));
+}
+
+.bag-pop {
+  animation: pop 0.45s var(--spring) both;
+}
+
+@keyframes pop {
+  from {
+    scale: 0.4;
+  }
+}
+
+/* ==========================================================================
    Motion
    Above the fold animates from the stylesheet; below it, the inline observer
-   (lib/reveal-script.ts) adds .is-in as things arrive. Client components set
-   their own state instead.
+   (lib/reveal-script.ts) adds .is-in as things arrive, and client components
+   set their own. Tilts use the `rotate` property, so entrances (which
+   animate `transform`) never erase them.
    ========================================================================== */
 
 @keyframes enter-rise {
@@ -194,34 +401,35 @@
   }
 }
 
-/* A print settling onto the table. */
-@keyframes settle {
-  from {
+/* A sticker slapped down: big, turned, then pressed flat. */
+@keyframes slap {
+  0% {
     opacity: 0;
-    transform: translateY(26px) rotate(calc(var(--r, 0deg) * 2.2)) scale(0.96);
+    scale: 1.55;
+    rotate: calc(var(--r, 0deg) - 16deg);
   }
-  to {
+  55% {
     opacity: 1;
-    transform: rotate(var(--r, 0deg));
+    scale: 0.94;
+    rotate: var(--r, 0deg);
   }
-}
-
-@keyframes drift {
-  0%,
   100% {
-    transform: translateY(0) rotate(var(--r, 0deg));
-  }
-  50% {
-    transform: translateY(-7px) rotate(calc(var(--r, 0deg) + 0.6deg));
+    opacity: 1;
+    scale: 1;
+    rotate: var(--r, 0deg);
   }
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
+/* Pen on paper. */
+@keyframes draw {
   to {
-    transform: translateX(-50%);
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes write {
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -245,6 +453,15 @@
   }
 }
 
+@keyframes footer-swim {
+  from {
+    transform: translateX(-10vw);
+  }
+  to {
+    transform: translateX(110vw);
+  }
+}
+
 @layer utilities {
   .enter {
     animation: enter-rise var(--dur, 0.9s) var(--ease-out) var(--delay, 0s) both;
@@ -258,20 +475,11 @@
     animation: mask-up var(--dur, 1.15s) var(--ease-out) var(--delay, 0s) both;
   }
 
-  .settle {
-    animation: settle 1.1s var(--ease-out) var(--delay, 0s) both;
-  }
-
-  .drift {
-    animation: drift var(--dur, 7s) ease-in-out var(--delay, 0s) infinite;
-  }
-
   /* Develops once, when its print arrives (.is-in on an ancestor, or itself). */
   .develop {
     filter: brightness(1.7) saturate(0) contrast(0.55) blur(3px);
   }
 
-  /* Its own delay variable: --delay belongs to the entrance wrappers around it. */
   .is-in .develop,
   .develop.is-in {
     animation: develop 2.2s ease-out var(--develop-delay, 0.1s) forwards;
@@ -302,34 +510,6 @@
   .rise.is-in .w > span {
     animation: mask-up 1.05s var(--ease-out) calc(var(--i, 0) * 60ms + var(--delay, 0s)) both;
   }
-
-  .no-js .reveal,
-  .reveal-all .reveal {
-    opacity: 1;
-  }
-
-  .no-js .rise .w > span,
-  .reveal-all .rise .w > span {
-    transform: none;
-  }
-
-  .no-js .develop,
-  .reveal-all .develop {
-    filter: none;
-  }
-
-  .marquee {
-    animation: marquee var(--dur, 38s) linear infinite;
-  }
-
-  .marquee-wrap:hover .marquee {
-    animation-play-state: paused;
-  }
-
-  .mask-fade-x {
-    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  }
 }
 
 /* The fish: body bobs, tail wags. */
@@ -343,53 +523,48 @@
   animation: wag 0.9s ease-in-out infinite;
 }
 
-@keyframes footer-swim {
-  from {
-    transform: translateX(-10vw);
+/* ==========================================================================
+   07:30  Stories over the masthead
+   ========================================================================== */
+
+.masthead {
+  font-size: clamp(5.4rem, 30.5vw, 21rem);
+}
+
+@media (min-width: 1024px) {
+  .masthead {
+    font-size: min(23.5vw, 21rem);
   }
-  to {
-    transform: translateX(110vw);
+}
+
+.hero-sun {
+  position: absolute;
+  z-index: 0;
+  right: -4%;
+  top: 2%;
+  width: min(68vw, 54rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgb(255 206 182 / 0.95), rgb(250 194 188 / 0.42) 55%, transparent 74%);
+  animation: sun-rise 3.4s var(--ease-out) 0.1s both;
+}
+
+@media (max-width: 1023.98px) {
+  .hero-sun {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: 6%;
+    width: 130vw;
+    margin-left: -65vw;
   }
 }
 
-/* The light of each hour. Each section blends from the last one's colour. */
-.light-morning {
-  background:
-    radial-gradient(60rem 30rem at 92% -10%, rgb(var(--sage) / 0.45), transparent 70%),
-    radial-gradient(40rem 26rem at 0% 30%, rgb(var(--blush) / 0.35), transparent 70%),
-    rgb(var(--bg));
-}
-
-.light-noon {
-  background: linear-gradient(to bottom, rgb(var(--bg)), rgb(var(--surface)) 40%, rgb(var(--bg)));
-}
-
-.light-afternoon {
-  background: linear-gradient(to bottom, rgb(var(--bg)), rgb(var(--oat)));
-}
-
-.light-golden {
-  background:
-    radial-gradient(50rem 30rem at 15% 100%, rgb(var(--blush) / 0.7), transparent 70%),
-    linear-gradient(to bottom, rgb(var(--oat)), rgb(var(--peach)));
-}
-
-.light-dusk {
-  background: linear-gradient(to bottom, rgb(var(--peach)), rgb(var(--blush)));
-}
-
-.light-night {
-  color: rgb(var(--accent-fg));
-  background:
-    radial-gradient(42rem 26rem at 85% 0%, rgb(var(--lamp) / 0.16), transparent 70%),
-    linear-gradient(to bottom, rgb(var(--night)), rgb(36 34 33));
-}
-
-/* The vlog timestamp that keeps the page's time. */
-@keyframes tick-in {
+@keyframes sun-rise {
   from {
     opacity: 0;
-    transform: translateY(40%);
+    transform: translateY(16%) scale(0.92);
   }
   to {
     opacity: 1;
@@ -397,24 +572,1374 @@
   }
 }
 
-.tick-in {
-  animation: tick-in 0.45s var(--ease-out) both;
+.story {
+  isolation: isolate;
 }
 
-/* The film strip's sprocket holes. */
-.sprockets {
-  background-image: radial-gradient(circle at 50% 50%, rgb(var(--bg)) 0 3.5px, transparent 4px);
-  background-size: 22px 14px;
-  background-repeat: repeat-x;
+.story-slide {
+  opacity: 0;
+  transition: opacity 0.7s ease;
 }
 
-/* Menu leaders. */
-.leader {
+.story-slide.is-active {
+  opacity: 1;
+}
+
+.story-slide.is-active img,
+.story-slide.was-active img {
+  animation: ken-burns 6.5s linear both;
+  animation-play-state: paused;
+}
+
+.story-slide.is-active.is-running img {
+  animation-play-state: running;
+}
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1.03);
+  }
+  to {
+    transform: scale(1.14) translate3d(0, -1.6%, 0);
+  }
+}
+
+.story-fill {
+  transform: scaleX(0);
+  animation: story-fill var(--story-s, 5s) linear both;
+}
+
+@keyframes story-fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.story-ring {
+  background: conic-gradient(from 200deg, rgb(var(--berry)), rgb(var(--honey)), rgb(var(--bubble)), rgb(var(--berry)));
+}
+
+.rec-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgb(var(--rec));
+  box-shadow: 0 0 0 3px rgb(var(--rec) / 0.25);
+}
+
+.rec-dot.is-live {
+  animation: rec 1.3s steps(1, end) infinite;
+}
+
+@keyframes rec {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.story-caption {
+  animation: caption-in 0.75s var(--ease-out) both;
+}
+
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* The stats, as story stickers. */
+.hero-stickers {
+  position: relative;
+  z-index: 30;
+  margin-top: -1.9rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+  gap: 0.9rem 0.6rem;
+}
+
+@media (max-width: 1023.98px) {
+  .hs-question {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .hs-question .text-\[2\.5rem\] {
+    font-size: 2.1rem;
+  }
+
+  .hs-slider {
+    width: 100%;
+    padding: 0.75rem 0.85rem 0.9rem;
+  }
+
+  .hs-slider .text-\[1\.9rem\] {
+    font-size: 1.6rem;
+  }
+
+  .hs-mention {
+    width: 100%;
+    padding: 0.75rem 0.8rem;
+  }
+
+  .hs-mention .text-\[2\.1rem\] {
+    font-size: 1.8rem;
+  }
+
+  .hs-views {
+    gap: 0.45rem;
+    padding: 0.6rem 0.9rem 0.6rem 0.8rem;
+  }
+
+  .hs-views .max-w-\[9rem\] {
+    max-width: 5.5rem;
+  }
+
+  .hero-sticker {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.hero-sticker {
+  rotate: var(--r, 0deg);
+  animation: slap 0.75s var(--spring) var(--delay, 0s) backwards;
+}
+
+@media (min-width: 1024px) {
+  .hero-stickers {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    display: block;
+    pointer-events: none;
+  }
+
+  .hero-sticker {
+    position: absolute;
+    pointer-events: auto;
+  }
+
+  /* Around the story, never over its controls (top bar, caption, button). */
+  .hero-sticker-0 {
+    left: -36%;
+    top: 21%;
+  }
+
+  .hero-sticker-1 {
+    left: -47%;
+    top: 58%;
+  }
+
+  .hero-sticker-2 {
+    right: -27%;
+    top: 30%;
+  }
+
+  .hero-sticker-3 {
+    right: -24%;
+    top: 84%;
+  }
+}
+
+.hs-question,
+.hs-slider,
+.hs-mention {
+  display: block;
+  background: #fff;
+  color: rgb(var(--fg));
+  box-shadow:
+    0 2px 4px rgb(60 30 20 / 0.08),
+    0 20px 34px -20px rgb(60 30 20 / 0.5);
+}
+
+.hs-question {
+  min-width: 9.75rem;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.hs-question-head {
+  display: block;
+  background: linear-gradient(90deg, rgb(var(--berry)), rgb(214 98 140));
+  padding: 0.45rem 1rem;
+  text-align: center;
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hs-slider {
+  width: 13.25rem;
+  border-radius: 20px;
+  padding: 0.85rem 1rem 1.05rem;
+}
+
+.hs-track {
+  position: relative;
+  display: block;
+  margin-top: 0.75rem;
+  height: 8px;
+  border-radius: 999px;
+  background: rgb(var(--fg) / 0.08);
+}
+
+.hs-fill {
+  position: absolute;
+  inset: 0 15% 0 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgb(var(--bubble)), rgb(var(--berry)));
+  transform-origin: left;
+  animation: slide-fill 1.3s var(--ease-out) calc(var(--delay, 0s) + 0.35s) both;
+}
+
+.hs-knob {
+  position: absolute;
+  top: 50%;
+  left: 85%;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(60 30 20 / 0.25);
+  translate: -50% -50%;
+  animation: slide-knob 1.3s var(--ease-out) calc(var(--delay, 0s) + 0.35s) both;
+}
+
+@keyframes slide-fill {
+  from {
+    transform: scaleX(0.05);
+  }
+}
+
+@keyframes slide-knob {
+  from {
+    left: 6%;
+  }
+}
+
+.hs-mention {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 16px;
+  padding: 0.85rem 1.2rem 0.8rem;
+}
+
+.hs-gradient {
+  background: linear-gradient(90deg, rgb(var(--berry)), rgb(var(--honey)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.08em;
+}
+
+.hs-views {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  background: rgb(var(--ink));
+  padding: 0.65rem 1.15rem 0.65rem 0.95rem;
+  color: #fff;
+  box-shadow: 0 20px 34px -20px rgb(20 10 10 / 0.7);
+}
+
+/* ==========================================================================
+   09:00  A sheet of die-cut stickers
+   ========================================================================== */
+
+.sticker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.65rem 1.25rem;
+  color: rgb(var(--fg));
+  line-height: 1.1;
+  box-shadow:
+    0 0 0 4px #fff,
+    0 2px 3px 4px rgb(60 30 20 / 0.08),
+    0 16px 26px -12px rgb(60 30 20 / 0.42);
+  rotate: var(--r, 0deg);
+  translate: 0 var(--y, 0px);
+  transition:
+    rotate 0.45s var(--spring),
+    scale 0.45s var(--spring),
+    box-shadow 0.45s ease;
+}
+
+/* A little gloss, like vinyl. */
+.sticker::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.5), transparent 42%);
+  pointer-events: none;
+}
+
+.sticker:hover {
+  rotate: calc(var(--r, 0deg) + 4deg);
+  scale: 1.05;
+  box-shadow:
+    0 0 0 4px #fff,
+    0 2px 3px 4px rgb(60 30 20 / 0.08),
+    0 26px 32px -14px rgb(60 30 20 / 0.45);
+}
+
+.stickers:not(.is-in) .sticker {
+  opacity: 0;
+}
+
+.stickers.is-in .sticker {
+  animation: slap 0.65s var(--spring) calc(var(--i, 0) * 80ms) backwards;
+}
+
+.s-label {
+  background: rgb(var(--ink));
+  color: rgb(var(--accent-fg));
+  padding: 0.75rem 1.1rem;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.s-serif {
+  padding: 0.35rem 1.35rem 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-style: italic;
+}
+
+.s-caps {
+  background: rgb(var(--bubble));
+  padding: 0.85rem 1.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.s-script {
+  border-radius: 24px;
+  background: rgb(var(--sage));
+  padding: 0.3rem 1.4rem 0.55rem;
+  font-family: var(--font-script);
+  font-size: 1.9rem;
+}
+
+.s-star {
+  background: rgb(var(--berry));
+  padding: 0.85rem 1.25rem;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.s-oval {
+  border-radius: 50%;
+  background: rgb(198 232 227);
+  padding: 0.95rem 1.7rem;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-style: italic;
+}
+
+.s-ticket {
+  border-radius: 8px;
+  background: rgb(var(--honey));
+  padding: 0.8rem 2.6rem 0.8rem 1.25rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.s-ticket::before {
+  content: "";
+  position: absolute;
+  right: 1.35rem;
+  top: 18%;
+  bottom: 18%;
+  border-left: 1.5px dashed rgb(var(--fg) / 0.35);
+}
+
+.s-pen {
+  border-radius: 14px;
+  padding: 0.25rem 1.2rem 0.4rem;
+  font-family: var(--font-hand);
+  font-size: 1.75rem;
+}
+
+.s-pen::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1.5px dashed rgb(var(--berry) / 0.55);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.s-fish {
+  padding: 0.35rem 1.15rem 0.45rem 0.9rem;
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+}
+
+/* ==========================================================================
+   12:00  The camera roll
+   ========================================================================== */
+
+.album-stack {
+  position: relative;
+  display: block;
+  width: 5rem;
+  height: 5.5rem;
+}
+
+.album-stack img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 2.5px solid #fff;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 8px 18px -10px rgb(60 30 20 / 0.5);
+  rotate: calc((var(--k) - 1) * 7deg);
+  translate: calc((var(--k) - 1) * 5px) 0;
+  z-index: calc(3 - var(--k));
+  transition:
+    rotate 0.45s var(--spring),
+    translate 0.45s var(--spring);
+}
+
+.album:hover .album-stack img,
+.album.is-selected .album-stack img {
+  rotate: calc((var(--k) - 1) * 13deg);
+  translate: calc((var(--k) - 1) * 11px) 0;
+}
+
+.album.is-selected .album-stack img:first-child {
+  box-shadow:
+    0 0 0 2.5px rgb(var(--berry)),
+    0 10px 20px -10px rgb(60 30 20 / 0.5);
+}
+
+.album.is-selected > span:nth-child(2) {
+  color: rgb(var(--berry));
+}
+
+.roll-tile {
+  animation: tile-in 0.6s var(--ease-out) calc(var(--i, 0) * 26ms) backwards;
+}
+
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: scale(0.965);
+  }
+}
+
+/* ==========================================================================
+   14:00  Covers marked up in pen
+   ========================================================================== */
+
+.marker-under {
+  background: linear-gradient(transparent 60%, rgb(var(--bubble) / 0.85) 60%, rgb(var(--bubble) / 0.85) 90%, transparent 90%) no-repeat 0 0 / 0% 100%;
+  padding: 0 0.1em;
+}
+
+.reveal.is-in .marker-under,
+.no-js .marker-under,
+.reveal-all .marker-under {
+  animation: marker 0.9s var(--ease-out) 0.6s forwards;
+}
+
+@keyframes marker {
+  to {
+    background-size: 100% 100%;
+  }
+}
+
+.anatomy-frame figure {
+  rotate: var(--r, 0deg);
+}
+
+/* Non-scaling strokes dash in screen pixels, so these use pixel lengths
+   (pathLength would be measured in the stretched viewBox). */
+.frame-mark path {
+  fill: none;
+  stroke: rgb(var(--berry));
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-dasharray: 1600;
+  stroke-dashoffset: 1600;
+}
+
+.frame-arrow {
+  position: absolute;
+  width: 3.4rem;
+  height: 3.4rem;
+  overflow: visible;
+}
+
+.frame-arrow path,
+.frame-then path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.frame-arrow path {
+  stroke: rgb(var(--berry));
+  stroke-width: 2.3;
+}
+
+.frame-note-text {
+  display: inline-block;
+  clip-path: inset(0 100% 0 0);
+}
+
+.note-up {
+  padding-left: 3.6rem;
+}
+
+.note-up .frame-arrow {
+  left: 0.2rem;
+  top: -2.2rem;
+  rotate: -18deg;
+}
+
+.note-up-right {
+  padding-left: 3.6rem;
+}
+
+.note-up-right .frame-arrow {
+  left: 0;
+  top: -2.4rem;
+  rotate: 4deg;
+}
+
+.note-up-left {
+  padding-right: 3.6rem;
+  text-align: right;
+}
+
+.note-up-left .frame-arrow {
+  right: 0.2rem;
+  top: -2.4rem;
+  scale: -1 1;
+  rotate: 14deg;
+}
+
+.frame-then {
+  position: absolute;
+  right: -3.2rem;
+  top: 14%;
+  width: 4.6rem;
+  overflow: visible;
+}
+
+.frame-then path {
+  stroke: rgb(var(--fg) / 0.4);
+  stroke-width: 1.6;
+}
+
+.anatomy.is-in .frame-mark path {
+  animation: draw 2.4s cubic-bezier(0.45, 0, 0.2, 1) calc(0.35s + var(--i) * 0.5s) forwards;
+}
+
+.anatomy.is-in .frame-arrow path {
+  animation: draw 0.6s var(--ease-out) calc(1.2s + var(--i) * 0.5s) forwards;
+}
+
+.anatomy.is-in .frame-note-text {
+  animation: write 0.9s ease-out calc(1.45s + var(--i) * 0.5s) forwards;
+}
+
+.anatomy.is-in .frame-then path {
+  animation: draw 0.8s var(--ease-out) calc(1.9s + var(--i) * 0.5s) forwards;
+}
+
+/* ==========================================================================
+   15:30  The order, in a shopping bag
+   ========================================================================== */
+
+.bag-item {
+  rotate: var(--r, 0deg);
+  translate: 0 var(--lift, 0%);
+  animation: drop 0.8s var(--spring) backwards;
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    translate: 0 -170%;
+    rotate: calc(var(--r, 0deg) * -2);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+
+.bag-tag {
+  transform-origin: 1.5rem 0;
+  animation: swing 3.8s ease-in-out infinite;
+}
+
+@keyframes swing {
+  0%,
+  100% {
+    rotate: -4deg;
+  }
+  50% {
+    rotate: 5deg;
+  }
+}
+
+.product {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.85rem;
+  border: 1px solid rgb(var(--fg) / 0.1);
+  border-radius: 18px;
+  background: rgb(var(--surface) / 0.72);
+  padding: 0.55rem 0.8rem 0.55rem 0.55rem;
+  text-align: left;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    scale 0.3s var(--spring);
+}
+
+.product:hover {
+  border-color: rgb(var(--fg) / 0.28);
+}
+
+.product:active {
+  scale: 0.985;
+}
+
+.product.is-on {
+  border-color: rgb(var(--berry) / 0.55);
+  background: rgb(var(--bubble) / 0.38);
+}
+
+.product-thumb {
+  width: 3.1rem;
+  flex-shrink: 0;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgb(var(--oat));
+}
+
+.product-add {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid rgb(var(--fg) / 0.2);
+  border-radius: 50%;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    rotate 0.4s var(--spring);
+}
+
+.product:hover .product-add {
+  rotate: 90deg;
+}
+
+.product.is-on .product-add {
+  border-color: rgb(var(--berry));
+  background: rgb(var(--berry));
+  color: #fff;
+  rotate: 0deg;
+}
+
+.size-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgb(var(--fg) / 0.18);
+  border-radius: 999px;
+  background: rgb(var(--surface) / 0.72);
+  padding: 0.6rem 1.05rem;
+  font-size: 14px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.size-pill:hover {
+  border-color: rgb(var(--fg) / 0.4);
+}
+
+.size-pill.is-on {
+  border-color: rgb(var(--fg));
+  background: rgb(var(--fg));
+  color: rgb(var(--accent-fg));
+}
+
+.size-pill.is-on .text-berry {
+  color: rgb(var(--bubble));
+}
+
+.shop-step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgb(var(--muted));
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.shop-step > span {
+  display: grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(var(--fg));
+  color: rgb(var(--accent-fg));
+  font-size: 10.5px;
+  letter-spacing: 0;
+}
+
+/* A sale tag, hole punched, hung at an angle. */
+.sale-tag {
+  position: relative;
+  rotate: 5deg;
+  background: rgb(var(--rec));
+  padding: 0.3rem 1rem 0.42rem 1.7rem;
+  color: #fff;
+  font-family: var(--font-hand);
+  font-size: 1.35rem;
+  line-height: 1;
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%);
+  -webkit-mask: radial-gradient(circle at 0.85rem 50%, transparent 3.5px, #000 4px);
+  mask: radial-gradient(circle at 0.85rem 50%, transparent 3.5px, #000 4px);
+}
+
+.checkout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1.5px dashed rgb(var(--fg) / 0.2);
+  padding-top: 1.5rem;
+}
+
+/* ==========================================================================
+   16:45  A page from her notebook
+   ========================================================================== */
+
+.notebook {
+  --margin: 2.4rem;
+  position: relative;
+  border-radius: 3px 3px 10px 10px;
+  background-color: #fffdf8;
+  background-image:
+    linear-gradient(90deg, transparent var(--margin), rgb(var(--berry) / 0.35) var(--margin), rgb(var(--berry) / 0.35) calc(var(--margin) + 1.5px), transparent calc(var(--margin) + 1.5px)),
+    repeating-linear-gradient(180deg, transparent 0 calc(2rem - 1px), rgb(110 150 185 / 0.2) calc(2rem - 1px) 2rem);
+  background-position:
+    0 0,
+    0 1.3rem;
+  padding: 2.4rem 1.3rem 2.6rem calc(var(--margin) + 1.1rem);
+  box-shadow:
+    0 1px 1px rgb(60 30 20 / 0.06),
+    0 34px 60px -34px rgb(60 30 20 / 0.5);
+  rotate: -0.6deg;
+}
+
+/* Punched holes down the margin. */
+.notebook::before {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 0.9rem;
+  background: radial-gradient(circle, rgb(var(--sky-2)) 0 0.42rem, rgb(60 30 20 / 0.16) 0.43rem 0.47rem, transparent 0.48rem) 0 12% / 0.9rem 0.9rem no-repeat,
+    radial-gradient(circle, rgb(var(--sky-2)) 0 0.42rem, rgb(60 30 20 / 0.16) 0.43rem 0.47rem, transparent 0.48rem) 0 50% / 0.9rem 0.9rem no-repeat,
+    radial-gradient(circle, rgb(var(--sky-2)) 0 0.42rem, rgb(60 30 20 / 0.16) 0.43rem 0.47rem, transparent 0.48rem) 0 88% / 0.9rem 0.9rem no-repeat;
+}
+
+@media (min-width: 768px) {
+  .notebook {
+    --margin: 4.2rem;
+    padding: 3rem 3rem 3.2rem calc(var(--margin) + 1.75rem);
+  }
+
+  .notebook::before {
+    left: 1.6rem;
+  }
+}
+
+.board-frame path,
+.board-arrow path,
+.board-check .board-tick {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.board-frame path {
+  stroke: rgb(var(--fg) / 0.7);
+  stroke-width: 1.5;
+  stroke-dasharray: 1600;
+  stroke-dashoffset: 1600;
+}
+
+.board-icon {
+  color: rgb(var(--fg) / 0.55);
+}
+
+.board-arrow {
+  position: absolute;
+  right: -2.25rem;
+  top: 42%;
+  width: 2rem;
+  overflow: visible;
+}
+
+.board-arrow path {
+  stroke: rgb(var(--fg) / 0.45);
+  stroke-width: 1.5;
+}
+
+.board-check .board-box {
+  fill: none;
+  stroke: rgb(var(--fg) / 0.55);
+  stroke-width: 1.4;
+}
+
+.board-check .board-tick {
+  stroke: rgb(var(--berry));
+  stroke-width: 2.5;
+}
+
+.board:not(.is-in) .board-icon {
+  opacity: 0;
+}
+
+.board.is-in .board-frame path {
+  animation: draw 2.2s cubic-bezier(0.45, 0, 0.2, 1) calc(var(--i) * 0.22s) forwards;
+}
+
+.board.is-in .board-icon {
+  animation: enter-fade 0.8s ease-out calc(0.5s + var(--i) * 0.22s) both;
+}
+
+.board.is-in .board-arrow path {
+  animation: draw 0.6s var(--ease-out) calc(0.8s + var(--i) * 0.22s) forwards;
+}
+
+.board.is-in .board-tick {
+  animation: draw 0.45s var(--ease-out) calc(1.4s + var(--i) * 0.35s) forwards;
+}
+
+.circled {
+  position: relative;
+  padding: 0.2rem 0.9rem;
+}
+
+.circled::before {
+  content: "";
+  position: absolute;
+  inset: -0.4rem -0.55rem;
+  border: 1.6px solid rgb(var(--berry) / 0.8);
+  border-radius: 50%;
+  rotate: -2deg;
+}
+
+/* ==========================================================================
+   18:00  Ticket stubs at golden hour
+   ========================================================================== */
+
+.tickets-scene {
+  isolation: isolate;
+}
+
+.tickets-scene::before {
+  content: "";
+  position: absolute;
+  inset: -60px;
+  z-index: -2;
+  background: var(--backdrop) center / cover no-repeat;
+  filter: blur(26px) saturate(1.2);
+  opacity: 0.85;
+}
+
+.tickets-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--sky-2)) 0%,
+    rgb(246 186 120 / 0.5) 16%,
+    rgb(232 150 90 / 0.3) 55%,
+    rgb(246 196 140 / 0.45) 84%,
+    rgb(var(--sky-2)) 100%
+  );
+}
+
+.ticket-drop {
+  rotate: var(--r, 0deg);
+  filter: drop-shadow(0 18px 20px rgb(110 50 10 / 0.28)) drop-shadow(0 2px 2px rgb(110 50 10 / 0.12));
+}
+
+@media (min-width: 1024px) {
+  .ticket-drop:nth-child(3n + 2) {
+    margin-top: 2.75rem;
+  }
+
+  .ticket-drop:nth-child(3n) {
+    margin-top: 1rem;
+  }
+}
+
+.tickets:not(.is-in) .ticket-drop {
+  opacity: 0;
+}
+
+.tickets.is-in .ticket-drop {
+  animation: ticket-in 0.85s var(--ease-out) calc(var(--i, 0) * 0.12s) backwards;
+}
+
+@keyframes ticket-in {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+    rotate: calc(var(--r, 0deg) * 3);
+  }
+}
+
+.ticket {
+  --cut: calc(100% - 5.4rem);
+  position: relative;
+  display: flex;
+  width: 100%;
+  border-radius: 14px;
+  background: #fffaf2;
+  color: rgb(var(--fg));
+  text-align: left;
+  -webkit-mask:
+    radial-gradient(circle at var(--cut) 0, transparent 9px, #000 9.5px) top / 100% 51% no-repeat,
+    radial-gradient(circle at var(--cut) 100%, transparent 9px, #000 9.5px) bottom / 100% 51% no-repeat;
+  mask:
+    radial-gradient(circle at var(--cut) 0, transparent 9px, #000 9.5px) top / 100% 51% no-repeat,
+    radial-gradient(circle at var(--cut) 100%, transparent 9px, #000 9.5px) bottom / 100% 51% no-repeat;
+  transition: translate 0.45s var(--spring);
+}
+
+.ticket:hover {
+  translate: 0 -6px;
+}
+
+.ticket-main {
+  display: flex;
+  min-width: 0;
   flex: 1;
-  min-width: 1.5rem;
-  margin: 0 0.6rem;
-  transform: translateY(-0.3em);
-  border-bottom: 1px dotted rgb(var(--fg) / 0.35);
+  align-items: center;
+  gap: 1rem;
+  border-left: 7px solid rgb(var(--band));
+  padding: 0.9rem 1rem 0.9rem 0.85rem;
+}
+
+.ticket-photo {
+  width: 4.6rem;
+  flex-shrink: 0;
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.ticket-stub {
+  display: flex;
+  width: 5.4rem;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border-left: 2px dashed rgb(var(--fg) / 0.22);
+  background: rgb(var(--band) / 0.5);
+  transition: background-color 0.3s ease;
+}
+
+.ticket:hover .ticket-stub {
+  background: rgb(var(--band) / 0.85);
+}
+
+.ticket-no {
+  margin-top: 0.2rem;
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   18:45  A photo-booth strip, a letter, a card
+   ========================================================================== */
+
+.booth {
+  rotate: 2.5deg;
+  padding-top: 0.55rem;
+}
+
+.booth-slot {
+  position: absolute;
+  left: -9%;
+  right: -9%;
+  top: 0;
+  z-index: 2;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: linear-gradient(#3b3431, #1d1918);
+  box-shadow:
+    inset 0 2px 3px rgb(0 0 0 / 0.55),
+    0 1px 0 rgb(255 255 255 / 0.45);
+}
+
+.booth-strip {
+  position: relative;
+  display: grid;
+  gap: 0.55rem;
+  background: #fffdf9;
+  padding: 0.7rem 0.7rem 0.9rem;
+  box-shadow: 0 34px 44px -28px rgb(60 30 20 / 0.55);
+}
+
+.booth-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1.08;
+  overflow: hidden;
+  background: rgb(var(--oat));
+}
+
+.booth-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.booth:not(.is-in) .booth-strip {
+  transform: translateY(-88%);
+  clip-path: inset(88% 0 0 0);
+}
+
+.booth.is-in .booth-strip {
+  animation: eject 1.7s var(--ease-out) 0.1s both;
+}
+
+.booth.is-in .booth-flash {
+  animation: flash 0.7s ease-out calc(0.9s + var(--i) * 0.45s) both;
+}
+
+@keyframes eject {
+  from {
+    transform: translateY(-88%);
+    clip-path: inset(88% 0 0 0);
+  }
+  to {
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.letter {
+  background-color: #fffdf8;
+  background-image: radial-gradient(120% 80% at 0% 0%, rgb(var(--peach) / 0.5), transparent 60%);
+  padding: 2.3rem 1.6rem 2rem;
+  box-shadow:
+    0 1px 1px rgb(60 30 20 / 0.05),
+    0 30px 50px -30px rgb(60 30 20 / 0.45);
+  rotate: -1deg;
+}
+
+@media (min-width: 768px) {
+  .letter {
+    padding: 3rem 2.8rem 2.4rem;
+  }
+}
+
+.name-card {
+  border-radius: 6px;
+  background: #fff;
+  padding: 1.6rem 1.5rem 1.4rem;
+  box-shadow:
+    inset 4px 0 0 rgb(var(--berry)),
+    0 1px 1px rgb(60 30 20 / 0.05),
+    0 26px 44px -26px rgb(60 30 20 / 0.42);
+  rotate: 1.4deg;
+}
+
+.cover-tag {
+  rotate: var(--r, 0deg);
+  border: 1px dashed rgb(var(--fg) / 0.3);
+  border-radius: 999px;
+  background: rgb(var(--surface) / 0.65);
+  padding: 0.2rem 0.85rem 0.3rem;
+  font-family: var(--font-hand);
+  font-size: 1.2rem;
+}
+
+/* ==========================================================================
+   20:30  Questions in the comments
+   ========================================================================== */
+
+.comments-scene {
+  isolation: isolate;
+}
+
+.comments-scene::before {
+  content: "";
+  position: absolute;
+  inset: -60px;
+  z-index: -2;
+  background: var(--backdrop) center / cover no-repeat;
+  filter: blur(34px) saturate(1.1);
+  opacity: 0.9;
+}
+
+.comments-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgb(var(--sky-2)) 0%, rgb(28 18 22 / 0.72) 22%, rgb(28 18 22 / 0.8) 78%, rgb(var(--sky-2)) 100%);
+}
+
+.comment-sheet {
+  border-radius: 28px;
+  background: rgb(var(--surface));
+  padding: 0.75rem 1.25rem 1.4rem;
+  color: rgb(var(--fg));
+  box-shadow: 0 50px 90px -40px rgb(0 0 0 / 0.75);
+}
+
+@media (min-width: 768px) {
+  .comment-sheet {
+    padding: 0.85rem 2rem 1.8rem;
+  }
+}
+
+.thread:not(.is-in) .comment {
+  opacity: 0;
+}
+
+.thread.is-in .comment {
+  animation: comment-pop 0.6s var(--spring) calc(0.15s + var(--i, 0) * 0.16s) backwards;
+}
+
+@keyframes comment-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+}
+
+/* ==========================================================================
+   22:30  One sentence to fill in, under the moon
+   ========================================================================== */
+
+.night-scene {
+  background: linear-gradient(180deg, transparent 0, rgb(var(--ink)) 10rem);
+}
+
+.moon {
+  position: absolute;
+  right: 9%;
+  top: 1.75rem;
+  width: clamp(4.5rem, 10vw, 8.5rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 32%, #fffbf2, #f2e5cc 58%, #dcc7a6);
+  box-shadow:
+    0 0 50px 8px rgb(var(--lamp) / 0.22),
+    0 0 160px 50px rgb(var(--lamp) / 0.1);
+}
+
+@media (min-width: 768px) {
+  .moon {
+    top: 4.5rem;
+  }
+}
+
+.moon::before,
+.moon::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(120 90 60 / 0.09);
+}
+
+.moon::before {
+  left: 54%;
+  top: 28%;
+  width: 18%;
+  height: 18%;
+}
+
+.moon::after {
+  left: 30%;
+  top: 58%;
+  width: 12%;
+  height: 12%;
+}
+
+.blank {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.blank input {
+  min-width: 3ch;
+  max-width: 100%;
+  border: 0;
+  border-bottom: 1.5px dashed rgb(var(--accent-fg) / 0.38);
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0.12em;
+  color: rgb(var(--lamp));
+  font-family: var(--font-hand);
+  font-size: 1.1em;
+  line-height: 1.1;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.blank input::placeholder {
+  color: rgb(var(--accent-fg) / 0.34);
+}
+
+.blank input:focus {
+  border-bottom-style: solid;
+  border-bottom-color: rgb(var(--lamp));
+}
+
+.blank.is-missing input {
+  border-bottom-color: rgb(var(--rec));
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  20%,
+  60% {
+    translate: -4px 0;
+  }
+  40%,
+  80% {
+    translate: 4px 0;
+  }
+}
+
+/* ==========================================================================
+   Before the observer, without it, and without JavaScript
+   ========================================================================== */
+
+.no-js .reveal,
+.reveal-all .reveal {
+  opacity: 1;
+}
+
+.no-js .rise .w > span,
+.reveal-all .rise .w > span {
+  transform: none;
+}
+
+.no-js .develop,
+.reveal-all .develop {
+  filter: none;
+}
+
+.no-js .stickers .sticker,
+.reveal-all .stickers .sticker,
+.no-js .tickets .ticket-drop,
+.reveal-all .tickets .ticket-drop,
+.no-js .thread .comment,
+.reveal-all .thread .comment,
+.no-js .board-icon,
+.reveal-all .board-icon {
+  opacity: 1;
+}
+
+.no-js .booth-strip,
+.reveal-all .booth-strip {
+  transform: none;
+  clip-path: none;
+}
+
+.no-js .frame-mark path,
+.reveal-all .frame-mark path,
+.no-js .frame-arrow path,
+.reveal-all .frame-arrow path,
+.no-js .frame-then path,
+.reveal-all .frame-then path,
+.no-js .board-frame path,
+.reveal-all .board-frame path,
+.no-js .board-arrow path,
+.reveal-all .board-arrow path,
+.no-js .board-tick,
+.reveal-all .board-tick {
+  stroke-dashoffset: 0;
+}
+
+.no-js .frame-note-text,
+.reveal-all .frame-note-text {
+  clip-path: none;
 }
 
 /* The player dialog. */
@@ -431,7 +1956,7 @@ dialog.player[open] {
    Accessibility
    ========================================================================== */
 
-/* The floating clock and preview badge wait on phones until the hero's
+/* The floating arc and preview badge wait on phones until the hero's
    stats have scrolled past (components/after-hero.tsx), then fade in. */
 .after-hero {
   transition:
@@ -459,6 +1984,20 @@ dialog.player[open] {
     scroll-behavior: auto !important;
   }
 
+  /* The stories' progress bar keeps its time; it starts paused. */
+  .story-fill {
+    animation-duration: var(--story-s, 5s) !important;
+  }
+
+  .story-slide img {
+    animation: none !important;
+  }
+
+  .window-light,
+  .fish-companion {
+    display: none;
+  }
+
   .reveal {
     opacity: 1;
   }
@@ -469,10 +2008,6 @@ dialog.player[open] {
 
   .develop {
     filter: none;
-  }
-
-  .fish-companion {
-    display: none;
   }
 }
 
@@ -486,12 +2021,18 @@ dialog.player[open] {
     margin: 12mm 14mm;
   }
 
+  html,
   body {
     background: #fff !important;
   }
 
-  body::after {
-    display: none;
+  body::after,
+  .sky,
+  .glow,
+  .glow-lamp,
+  .stars,
+  .window-light {
+    display: none !important;
   }
 
   .no-print {

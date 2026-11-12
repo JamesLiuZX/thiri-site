@@ -1,5 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Phase 1 placeholder: a neutral play mark. The design direction replaces it. -->
-  <rect width="64" height="64" rx="18" fill="#141416"/>
-  <path d="M26 20 L46 32 L26 44 Z" fill="#faf9f7"/>
+  <!-- Her signature: the fish from 妤🐟, on cover pink. -->
+  <rect width="64" height="64" rx="18" fill="#F7C5D6"/>
+  <g transform="translate(7 18)" fill="none" stroke="#2C2A29" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M12 14 L2 6 Q5 14 2 22 Z"/>
+    <path d="M12 14 C17 4 33 3 44 13 C46 14.5 46 13.5 44 15 C33 25 17 24 12 14 Z"/>
+    <path d="M24 9 Q27 14 24 19" stroke-width="2" opacity="0.6"/>
+    <circle cx="37.5" cy="12" r="1.6" fill="#2C2A29" stroke="none"/>
+  </g>
 </svg>

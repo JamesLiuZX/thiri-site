@@ -1,6 +1,20 @@
 # Design directions
 
-## Chosen: a day in her life (C, refined)
+## v3: one day, felt rather than labelled (chosen)
+
+James's verdict on the day-clock version was the one he gave Annie's first draft: it still read as made by AI. Every section repeated one template (label, centred serif headline, line, block), the reasons and the process were rows of boxes, the menu and FAQ were long lists, and the day lived only in timestamps. v3 keeps the idea and the palette and puts the day into the experience:
+
+- **The light is the clock.** As the reader scrolls, the sky moves through one day in colours from her covers: the blush of her pink-makeup GRWMs, sea glass from her island days, café latte, the apricot of golden-hour beaches, rose sparkles, espresso ink. The sun's glow crosses from the left at dawn to the right at golden hour. Window-light shadows, the window bars and a palm frond, lean and drift across the page, and at night a lamp comes on and the stars come out. A small sun, then the moon, travels an arc in the corner and opens the running order.
+- **Video first.** The cover is her stories: Instagram-style progress bars, REC and a timecode, a slow zoom on each cover, tap through, hold to pause, watch with sound.
+- **The vlog journal.** The craft comes from what her covers and feed are made of: die-cut stickers, marker loops and handwritten arrows on real covers, a ruled notebook shot list, ticket stubs, a photo-booth strip, a letter, comments.
+- **Brands get what they need from each section.** The marked-up covers show why the content sells (hook, product, call to action) on her real work. The order you build is a nod to her mega-sale fluency, and it writes the brief. Booking is one sentence.
+- **No two sections share a layout**, and each heading is set its own way: a masthead, a sticker, an app-style title, a pen line, a shop header, a notebook header, a script word, a letter's greeting, a comments header, the sentence itself.
+
+The type stays Cormorant with Hanken Grotesk and Caveat, plus Parisienne, a flowing script like the one on her covers.
+
+## Before v3: a day in her life (C, refined)
+
+Kept on the branch `archive/2026-11-12-day-clock`.
 
 Her feed and James's brief pointed past all three. The look is C, Soft Studio, warmed to her feed and set in James's palette: cream `#FAF8F5`, blush `#E8D5CE`, sage `#C5D1C8` and espresso `#2C2A29`. The type is Cormorant (editorial serif) with Hanken Grotesk, plus Caveat in small doses for the hand-written notes her covers use.
 

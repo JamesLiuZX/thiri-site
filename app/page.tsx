@@ -1,113 +1,137 @@
 import Link from "next/link"
 import { ArrowUpRight, FileText } from "lucide-react"
+import About from "@/components/about"
+import Anatomy from "@/components/anatomy"
 import Booking from "@/components/booking"
-import DayClock from "@/components/day-clock"
+import Comments from "@/components/comments"
+import Day from "@/components/day"
+import { Notes, Results } from "@/components/extras"
 import Footer from "@/components/footer"
-import Heading from "@/components/heading"
 import Hero from "@/components/hero"
 import Nav from "@/components/nav"
+import Order from "@/components/order"
 import PreviewBadge from "@/components/preview-badge"
-import { About, Angles, BrandStrip, Faq, FilmStrip, Menu, Notes, Results, hour } from "@/components/sections"
-import Portfolio from "@/components/work/portfolio"
-import { site } from "@/content/site"
+import Providers from "@/components/providers"
+import Stickers from "@/components/stickers"
+import Storyboard from "@/components/storyboard"
+import Tickets from "@/components/tickets"
+import CameraRoll from "@/components/work/camera-roll"
+import { isSampled, site } from "@/content/site"
+import { moment } from "@/lib/day"
 
 /*
- * A day in her life. Her signature format is the day-in-the-life vlog, so
- * the site keeps time: the cover at 07:30, the work filed by hour (08:00
- * Beauty & Hair, 12:30 F&B, 17:30 Fashion, the weekend's travel), the menu
- * in the afternoon, the About at golden hour, booking after dark. Each
- * section is lit for its hour, and a vlog timestamp in the corner follows.
+ * One day of hers, from first light to goodnight, and the page's light
+ * follows it (components/day.tsx). No two sections share a layout:
  *
- * Inside the day, the order is a brand's: value proposition, reach, "Work
- * with me", who trusts her, the work by pillar, why it works, what to book,
- * who she is, and how to reach her.
+ *   07:30  stories over her masthead, stats as story stickers
+ *   09:00  the brands that trust her, as die-cut stickers
+ *   12:00  her camera roll, edge to edge, with albums
+ *   14:00  three covers marked up: hook, product, call to action
+ *   15:30  the services as an order you build in a shopping bag
+ *   16:45  how a shoot runs, as a notebook shot list
+ *   18:00  weekends away, as ticket stubs at golden hour
+ *   18:45  who she is: a photo-booth strip, a letter, a card
+ *   20:30  questions answered in the comments
+ *   22:30  booking as one sentence to fill in, under the moon
  */
 
 const has = <T,>(list: T[] | undefined): list is T[] => Array.isArray(list) && list.length > 0
 const platform = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube" } as const
 
 export default function Home() {
+  const first = site.name.split(" ")[0] || site.wordmark
   const links = [
     has(site.videos) && { id: "work", name: "Work" },
-    (has(site.services) || has(site.packages)) && { id: "services", name: "Services" },
+    (has(site.services) || has(site.packages)) && { id: "order", name: "Services" },
     site.bio && { id: "about", name: "About" },
   ].filter(Boolean) as { id: string; name: string }[]
 
   return (
-    <>
+    <Providers>
+      <Day />
       <Nav links={links} />
       <main>
         <Hero />
-        <BrandStrip />
+        <Stickers />
 
         {has(site.videos) && (
-          <section id="work" {...hour(site.pillars[0]?.time ?? "08:00", site.pillars[0]?.tab ?? "The work", "noon")} className="light-noon py-24 md:py-36">
+          <section id="work" {...moment("12:00", "The work", "noon")} aria-labelledby="work-title" className="relative py-16 md:py-24">
+            <CameraRoll videos={site.videos} pillars={site.pillars} socials={site.socials} />
+          </section>
+        )}
+
+        <Anatomy />
+        <Results />
+
+        {(has(site.services) || has(site.packages)) && (
+          <section id="order" {...moment("15:30", "Services", "afternoon")} aria-labelledby="services-title" className="relative py-20 md:py-28">
             <div className="shell">
-              <Heading kicker="The work" title={["A day of", { text: "content.", className: "italic" }]} intro="Filed by the hour I'd film it. Tap any print to watch." slots={["videos"]} />
-              <div className="mt-12 md:mt-16">
-                <Portfolio pillars={site.pillars} videos={site.videos} sectionId="work" />
-              </div>
+              <Order
+                services={site.services}
+                packages={site.packages}
+                usage={site.usage}
+                videos={site.videos}
+                wordmark={site.wordmark || site.handle}
+                sampleUsage={isSampled("usage")}
+              />
             </div>
           </section>
         )}
 
-        <Angles />
-        <Results />
-        <Menu />
-        <FilmStrip />
+        <Storyboard />
+        <Tickets />
         <About />
         <Notes />
-        <Faq />
+        <Comments />
 
-        <section id="book" {...hour("22:30", "Booking", "night")} className="light-night py-24 md:py-36">
-          <div className="shell">
-            <Heading
-              kicker="Booking"
-              tone="paper"
-              title={["Let's make", { text: "something.", className: "italic" }]}
-              intro={site.booking.responseTime ? `Send a brief and I'll reply ${site.booking.responseTime}.` : "Send a brief: the brand, the product, what you need and when."}
-            />
-            <div className="mt-14 grid gap-12 md:mt-20 lg:grid-cols-12">
-              <div className="text-fg lg:col-span-7">
-                {site.booking.email ? <Booking booking={site.booking} services={site.services} usage={site.usage} /> : <p className="text-accent-fg/70">Message me on any of the platforms here.</p>}
-              </div>
-              <aside className="space-y-8 lg:col-span-4 lg:col-start-9">
-                {site.booking.email && (
-                  <div>
-                    <p className="label text-accent-fg/55">Or write to me</p>
-                    <a href={`mailto:${site.booking.email}`} className="link mt-2 inline-block break-all font-display text-[1.6rem] italic leading-tight">
-                      {site.booking.email}
-                    </a>
-                  </div>
-                )}
+        <section id="book" {...moment("22:30", "Booking", "night")} aria-labelledby="book-title" className="night-scene relative overflow-hidden pb-24 pt-28 text-accent-fg md:pb-32 md:pt-40">
+          <div aria-hidden="true" className="moon" />
+          <div className="shell relative">
+            <h2 id="book-title" className="reveal font-hand text-[clamp(1.6rem,2.4vw,2rem)] text-lamp">
+              after dark, the inbox is open
+            </h2>
+            <div className="mt-6 max-w-[62rem]">
+              {site.booking.email ? <Booking booking={site.booking} to={first} /> : <p className="text-accent-fg/70">Message me on any of the platforms below.</p>}
+            </div>
+
+            <div className="mt-20 grid gap-10 border-t border-accent-fg/10 pt-10 md:grid-cols-3">
+              {site.booking.email && (
                 <div>
-                  <p className="label text-accent-fg/55">Find me</p>
-                  <ul className="mt-3 space-y-2">
-                    {site.socials.map((social) => (
-                      <li key={social.url}>
-                        <a href={social.url} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-1.5 text-[16px]">
-                          <span className="link">
-                            {platform[social.platform]} {social.handle}
-                          </span>
-                          {social.followers && <span className="text-accent-fg/55">· {social.followers}</span>}
-                          <ArrowUpRight className="h-3.5 w-3.5 text-accent-fg/55 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="label text-accent-fg/50">Or write to me</p>
+                  <a href={`mailto:${site.booking.email}`} className="link mt-3 inline-block break-all font-display text-[1.5rem] italic leading-tight">
+                    {site.booking.email}
+                  </a>
                 </div>
-                <Link href="/media-kit" className="inline-flex items-center justify-center gap-2 rounded-full border border-accent-fg/25 px-6 py-3.5 text-[14px] transition-colors hover:border-accent-fg/60">
+              )}
+              <div>
+                <p className="label text-accent-fg/50">Find me</p>
+                <ul className="mt-3 space-y-2">
+                  {site.socials.map((social) => (
+                    <li key={social.url}>
+                      <a href={social.url} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-1.5 text-[15.5px]">
+                        <span className="link">
+                          {platform[social.platform]} {social.handle}
+                        </span>
+                        {social.followers && <span className="text-accent-fg/50">· {social.followers}</span>}
+                        <ArrowUpRight className="h-3.5 w-3.5 text-accent-fg/50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="label text-accent-fg/50">For your team</p>
+                <Link href="/media-kit" className="mt-3 inline-flex items-center gap-2 rounded-full border border-accent-fg/25 px-5 py-3 text-[14px] transition-colors hover:border-accent-fg/60">
                   <FileText className="h-4 w-4" />
                   The media kit
                 </Link>
-              </aside>
+              </div>
             </div>
           </div>
         </section>
       </main>
       <Footer />
-      <DayClock />
       <PreviewBadge />
-    </>
+    </Providers>
   )
 }
