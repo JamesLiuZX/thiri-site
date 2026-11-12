@@ -55,7 +55,7 @@ export default function Hero() {
           </div>
 
           {site.stats.length > 0 && (
-            <div className="enter mt-12 border-t border-fg/10 pt-6" style={at(0.95)}>
+            <div data-hero-stats className="enter mt-12 border-t border-fg/10 pt-6" style={at(0.95)}>
               <dl className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
                 {site.stats.map((stat) => (
                   <div key={stat.label} className="flex flex-col">

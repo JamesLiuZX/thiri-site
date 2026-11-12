@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Moon, Sun, Sunrise, Sunset } from "lucide-react"
 import { cn } from "@/lib/site"
+import { PHONE_QUERY, usePastHero } from "./after-hero"
 
 type Moment = { id: string; time: string; label: string; light: string }
 
@@ -13,12 +14,18 @@ const icon = (light: string) => (light === "night" ? Moon : light === "golden" |
  * reads the hour of the section you are in, from 07:30 to after midnight.
  * Tap it for the day's running order. Sections opt in with data-time,
  * data-moment and data-light; the portfolio updates its own time per tab.
+ * On phones it fades in only once the hero's stats have scrolled past.
  */
 export default function DayClock() {
   const [moments, setMoments] = useState<Moment[]>([])
   const [current, setCurrent] = useState<Moment | null>(null)
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
+  const past = usePastHero()
+
+  useEffect(() => {
+    if (!past && window.matchMedia(PHONE_QUERY).matches) setOpen(false)
+  }, [past])
 
   useEffect(() => {
     const read = () =>
@@ -83,7 +90,7 @@ export default function DayClock() {
   const dark = current.light === "night"
 
   return (
-    <div ref={root} className="no-print fixed bottom-4 left-4 z-[60] md:bottom-6 md:left-6">
+    <div ref={root} className={cn("after-hero no-print fixed bottom-4 left-4 z-[60] md:bottom-6 md:left-6", past && "is-past")}>
       {open && (
         <nav aria-label="The day, section by section" className="enter mb-3 w-64 rounded-[22px] bg-surface/95 p-3 text-fg shadow-lift backdrop-blur" style={{ ["--dur" as string]: "0.35s", ["--enter-y" as string]: "8px" }}>
           <ol>

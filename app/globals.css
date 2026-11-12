@@ -431,6 +431,23 @@ dialog.player[open] {
    Accessibility
    ========================================================================== */
 
+/* The floating clock and preview badge wait on phones until the hero's
+   stats have scrolled past (components/after-hero.tsx), then fade in. */
+.after-hero {
+  transition:
+    opacity 0.5s ease,
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.5s;
+}
+
+@media (max-width: 767.98px) {
+  .after-hero:not(.is-past) {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
