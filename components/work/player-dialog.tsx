@@ -78,7 +78,7 @@ const PlayerDialog = forwardRef<PlayerHandle>(function PlayerDialog(_, ref) {
       aria-label={current ? current.title : "Video"}
       className="player m-auto max-h-[96svh] max-w-[min(94vw,30rem)] overflow-visible bg-transparent p-0 text-white"
     >
-      <div className="relative aspect-[9/16] max-h-[84svh] w-[min(94vw,30rem)] overflow-hidden rounded-3xl bg-black">
+      <div className={`relative max-h-[84svh] w-[min(94vw,30rem)] overflow-hidden rounded-3xl bg-black ${current?.ratio === "3/4" && !current?.src ? "aspect-[3/4]" : "aspect-[9/16]"}`}>
         <video ref={videoRef} controls playsInline className={current?.src ? "h-full w-full object-contain" : "hidden"} />
         {embedSrc && (
           <iframe
@@ -90,13 +90,26 @@ const PlayerDialog = forwardRef<PlayerHandle>(function PlayerDialog(_, ref) {
           />
         )}
         {current && !current.src && !embedSrc && (
-          <div className="grid h-full place-items-center p-8 text-center text-sm text-white/70">This post can&apos;t be embedded.</div>
+          // No file or embed yet: the cover, and the way to watch it.
+          <div className="relative h-full">
+            {current.poster && <img src={current.poster} alt="" className="h-full w-full object-cover" />}
+            <div className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/70 to-transparent p-6 pt-24">
+              {current.href ? (
+                <a href={current.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-black">
+                  Watch on {current.href.includes("instagram") ? "Instagram" : "TikTok"}
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              ) : (
+                <p className="text-sm text-white/75">This post can&apos;t be embedded.</p>
+              )}
+            </div>
+          </div>
         )}
       </div>
 
       <div className="mt-3 flex items-start justify-between gap-4 px-1">
         <div className="min-w-0">
-          <p className="truncate text-[15px] font-medium">{current?.title}</p>
+          <p className="truncate font-display text-[1.5rem] italic leading-tight">{current?.title}</p>
           <p className="mt-0.5 text-sm text-white/60">
             {current && FORMAT_LABELS[current.format]}
             {current?.brand && ` · ${current.brand}`}

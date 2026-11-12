@@ -2,7 +2,14 @@
 
 A portfolio for a UGC creator (Instagram [@thiriiii_](https://www.instagram.com/thiriiii_/), TikTok [@thiriiiii](https://www.tiktok.com/@thiriiiii)), built for the people who hire her: brands and agencies. A static Next.js 15 site (App Router, `output: "export"`), Tailwind 3, pnpm, Node 22, with a printable media kit at `/media-kit`.
 
-**Status: phase 1.** The structure, the content model and the engineering are done, and the styling is deliberately neutral. The design system comes from her own content (see [docs/directions.md](docs/directions.md)). Until her material is in, empty slots show labelled SAMPLE stand-ins and a "Preview" badge.
+**Status: built, awaiting her approval.** The site is told as *a day in her life*: her signature format is the day-in-the-life vlog, so the page keeps time. The cover sits at 07:30, the work is filed by hour (08:00 Beauty & Hair, 12:30 F&B & Lifestyle, 17:30 Fashion & E-commerce, the weekend's Travel), the menu is in the afternoon, the About at golden hour, and booking after dark. Each section is lit for its hour, and a vlog timestamp in the corner follows the reader. See [docs/directions.md](docs/directions.md).
+
+Content comes from two sources, and every fact is for Kate to confirm before launch:
+
+- her TikTok and Instagram profiles, captured by James on 2026-11-12 (counts, covers, views, the brands named on her covers)
+- James's creator brief (her name, pillars, brand partners, deliverables, packages, selling angles)
+
+Where they differ, the captures win. The site stays noindex until she approves it, and the slots nobody has supplied yet (usage rights, process, turnaround, FAQ, languages, audience) still show labelled SAMPLE stand-ins and a "Preview" pill.
 
 ## Run it
 
@@ -26,7 +33,9 @@ Rules: never invent a number, brand, testimonial or caption. Stats come from her
 
 ### Her videos
 
-Put files in `public/work/` and list them in `content.videos`:
+For now, every video is a cover cropped from her TikTok grid (a provisional poster, for her approval) that opens on TikTok, plus three real posts that play in the official TikTok or Instagram embed. When her original files arrive, add `src` (and a 9:16 `poster`, then drop `ratio: "3/4"`) to each entry, and they play on the site.
+
+To add one, put the files in `public/work/` and list them in `content.videos`:
 
 ```ts
 { id: "serum", title: "Morning skincare", format: "testimonial", brand: "Brand", src: "/work/serum.mp4", poster: "/work/serum.jpg", duration: "0:28" }
@@ -51,9 +60,20 @@ Put files in `public/work/` and list them in `content.videos`:
 
 ## Before launch
 
-- [ ] Her real material in every required slot: name, tagline, bio, portrait, videos, booking (`pnpm check:content`).
-- [ ] She approves the copy and every figure.
-- [ ] Delete `public/samples/`, set `launch.useSamples = false`, and run `pnpm check:launch`.
+Questions for Kate:
+
+- [ ] Her name on the site ("Kate Zheng"), and how brands should address her.
+- [ ] Publishing her email on the site (it is already in both bios).
+- [ ] The "Trusted by" list. None of James's brands carries a paid-partnership label in the captures; Aestura is named on a cover. Separately, her covers name Glow Recipe, OLENS, Medicube, SHEIN (with a discount code), Soundpeats, Montigo and Taobao. Which of these were brand work?
+- [ ] The 1.5M-view TikTok. The brief says her Juno Hair transformation passed 1.5M views; the cover in the capture doesn't show which video it is.
+- [ ] "Bilingual": which languages does she film in?
+- [ ] Naming her university, and whether couple content belongs on the site (both are off by default).
+- [ ] Usage rights, process and turnaround, FAQ answers, audience figures, and rates (or "on request").
+- [ ] The posters and portrait cropped from her profile, the cover titles, and the site copy.
+
+Then:
+
+- [ ] Fill the slots above, set `launch.useSamples = false`, and run `pnpm check:launch`.
 - [ ] Set `launch.indexable = true`. The build refuses this while any SAMPLE is still in use.
 
 ## Deploy
@@ -64,7 +84,9 @@ On Vercel, import the repository at vercel.com/new. Next.js is detected and no s
 
 | Where | What |
 | --- | --- |
-| `app/page.tsx` | The page, in the order a brand evaluates a creator: hook, brands, videos by format, pillars, results, services / usage / packages, process, testimonials, about, FAQ, booking |
+| `app/page.tsx` | The day: cover (07:30), Trusted by, the work by hour, why brands book her, the menu, process, About (golden hour), FAQ, booking (22:30). Case studies and testimonials appear once they are real |
+| `components/day-clock.tsx` | The vlog timestamp that keeps the page's time, and opens the day's running order |
+| `components/work/portfolio.tsx` | The portfolio tabs (one per pillar, by hour) and their reels; "Everything" is the moodboard |
 | `app/media-kit/` | The printable media kit, built from the same content |
 | `components/work/` | The 9:16 gallery, tiles and the shared player dialog |
 | `components/booking.tsx` | "Build your brief": composes an email, or posts to `booking.formEndpoint` |

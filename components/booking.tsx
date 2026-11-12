@@ -66,20 +66,20 @@ export default function Booking({ booking, services, usage }: { booking: Booking
     }
   }
 
-  const field = "w-full rounded-xl border border-line bg-surface px-4 py-3 text-[15px] outline-none transition-colors placeholder:text-muted/70 focus:border-fg/50"
+  const field = "w-full rounded-2xl border border-fg/15 bg-surface/90 px-4 py-3.5 text-[15px] outline-none transition-colors placeholder:text-muted/60 focus:border-fg/45"
   const legend = "label mb-2 block text-muted"
 
   if (status === "sent") {
     return (
-      <div role="status" className="rounded-3xl border border-line bg-surface p-8">
-        <p className="text-xl font-medium">Brief sent.</p>
+      <div role="status" className="rounded-[32px] bg-surface p-10 shadow-print">
+        <p className="font-display text-[2.2rem] font-light italic">Brief sent.</p>
         <p className="mt-2 text-muted">{booking.responseTime ? `Expect a reply ${booking.responseTime}.` : "Expect a reply soon."}</p>
       </div>
     )
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-5 rounded-3xl border border-line bg-surface p-6 md:p-8">
+    <form onSubmit={onSubmit} className="grid gap-5 rounded-[32px] bg-surface p-6 shadow-print md:p-10">
       <div className="grid gap-5 sm:grid-cols-2">
         <label>
           <span className={legend}>Brand</span>
@@ -104,7 +104,7 @@ export default function Booking({ booking, services, usage }: { booking: Booking
           <legend className={legend}>What you need</legend>
           <div className="flex flex-wrap gap-2">
             {services.map((service) => (
-              <label key={service.name} className="chip cursor-pointer has-[:checked]:border-fg has-[:checked]:bg-fg has-[:checked]:text-bg">
+              <label key={service.name} className="chip cursor-pointer has-[:checked]:border-accent has-[:checked]:bg-accent has-[:checked]:text-accent-fg">
                 <input type="checkbox" name="deliverables" value={service.name} className="sr-only" />
                 {service.name}
               </label>
@@ -147,14 +147,14 @@ export default function Booking({ booking, services, usage }: { booking: Booking
       </label>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={status === "sending"} className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90 disabled:opacity-60">
+        <button type="submit" disabled={status === "sending"} className="btn disabled:opacity-60">
           {status === "sending" ? "Sending…" : booking.formEndpoint ? "Send the brief" : "Email the brief"}
           <Send className="h-4 w-4" />
         </button>
         <button
           type="button"
           onClick={(event) => onCopy(event.currentTarget.form)}
-          className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3.5 text-sm transition-colors hover:border-fg/40"
+          className="btn-ghost"
         >
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           {copied ? "Copied" : "Copy the brief"}

@@ -1,3 +1,18 @@
+# Design directions
+
+## Chosen: a day in her life (C, refined)
+
+Her feed and James's brief pointed past all three. The look is C, Soft Studio, warmed to her feed and set in James's palette: cream `#FAF8F5`, blush `#E8D5CE`, sage `#C5D1C8` and espresso `#2C2A29`. The type is Cormorant (editorial serif) with Hanken Grotesk, plus Caveat in small doses for the hand-written notes her covers use.
+
+The signature idea comes from her format, the day-in-the-life vlog. The site keeps time:
+
+- **The page:** sections are filed by hour (07:30 cover, 08:00 Beauty & Hair, 12:30 F&B, 17:30 Fashion, the weekend's Travel, 15:30 the menu, 18:30 golden-hour About, 22:30 booking, 00:00 goodnight), and each is lit for its hour.
+- **The clock:** a vlog timestamp in the corner follows the reader and opens the day's running order.
+- **The prints:** her work sits on instant prints that develop as they arrive. "Everything" lays them all on a draggable moodboard.
+- **The fish:** a small fish, from 妤🐟, is the one playful note.
+
+The three phase-1 options follow, for the record.
+
 # Three design directions
 
 Phase 1 is neutral on purpose. One of these (or a better idea her content suggests) becomes the site once her material is in. The pick follows her feed: the colours she grades to, how she films, and what brands she attracts.

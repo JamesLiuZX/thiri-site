@@ -21,7 +21,19 @@
 export type Platform = "instagram" | "tiktok" | "youtube"
 
 /** Formats brands browse by. */
-export type Format = "testimonial" | "unboxing" | "grwm" | "tutorial" | "voiceover" | "hooks" | "review" | "lifestyle"
+export type Format =
+  | "testimonial"
+  | "unboxing"
+  | "grwm"
+  | "tutorial"
+  | "voiceover"
+  | "hooks"
+  | "review"
+  | "lifestyle"
+  | "haul"
+  | "vlog"
+  | "transformation"
+  | "walkthrough"
 
 export const FORMAT_LABELS: Record<Format, string> = {
   testimonial: "Testimonial",
@@ -32,6 +44,10 @@ export const FORMAT_LABELS: Record<Format, string> = {
   hooks: "Hook variations",
   review: "Review",
   lifestyle: "Lifestyle",
+  haul: "Haul",
+  vlog: "Vlog",
+  transformation: "Transformation",
+  walkthrough: "Walkthrough",
 }
 
 export type Social = { platform: Platform; handle: string; url: string; followers?: string }
@@ -55,9 +71,19 @@ export type Video = {
   /** Only from the brand's or her own numbers. */
   result?: string
   featured?: boolean
+  /** The pillar (portfolio tab) it belongs to. */
+  pillar?: string
+  /** Poster shape: "3/4" for covers cropped from her profile grid; files are 9:16. */
+  ratio?: "9/16" | "3/4"
+  /** Where to watch it while there is no file or embed. */
+  href?: string
 }
 
-export type Pillar = { name: string; description: string; videoIds?: string[] }
+/** A content pillar; on the site, one portfolio tab, filed under a time of day. */
+export type Pillar = { id: string; time: string; tab: string; name: string; description: string; videoIds?: string[] }
+
+/** A reason brands book her. */
+export type Angle = { title: string; body: string }
 export type Brand = { name: string; logo?: string; url?: string }
 export type CaseStudy = { brand: string; brief: string; delivered: string; result?: string; videoId?: string }
 export type Service = { name: string; description: string; includes?: string[] }
@@ -69,7 +95,12 @@ export type Faq = { q: string; a: string }
 export type Booking = { email: string; formEndpoint?: string; calendar?: string; responseTime?: string }
 
 export type Content = {
+  /** Her name as brands should address her. */
   name: string
+  /** The name set large on the site. */
+  wordmark: string
+  /** The display name on her public profile. */
+  displayName: string
   handle: string
   tagline: string
   bio: string
@@ -78,6 +109,10 @@ export type Content = {
   portrait: string
   socials: Social[]
   pillars: Pillar[]
+  angles: Angle[]
+  /** Brands named on her own video covers (not necessarily paid work). */
+  featured: string[]
+  market: string
   stats: Stat[]
   audience: Stat[]
   videos: Video[]
@@ -111,34 +146,137 @@ export const launch = {
 /* Her real material                                                          */
 /* -------------------------------------------------------------------------- */
 
+// Sources, and every fact here is for Kate to confirm before launch:
+//   [capture]  her TikTok or Instagram profile, captured by James on 2026-11-12
+//   [James]    James's creator brief (provided by James, confirm with Kate)
+//   [site]     copy written for the site from those two, for her approval
+// Where the brief and the captures differ, the captures win.
+const TIKTOK = "https://www.tiktok.com/@thiriiiii"
+const VIEWS = "views on TikTok"
+
 export const content: Content = {
-  // Display name and preferred spelling: to confirm with her.
-  name: "",
-  // Instagram is the handle James listed first. Confirm which one leads.
-  handle: "@thiriiii_",
-  tagline: "",
-  bio: "",
-  location: "",
+  // [James] Her name. Confirm she wants it on the site.
+  name: "Kate Zheng",
+  // [capture] Her handle, as the wordmark.
+  wordmark: "thiriiii",
+  // [capture] Display name on both profiles.
+  displayName: "妤🐟",
+  handle: "@thiriiiii",
+  // [James] His value proposition.
+  tagline: "Singapore lifestyle, beauty & F&B UGC creator",
+  // [site] From the brief: her student perspective and her SG/SEA audience.
+  bio: "I'm Kate, a student in Singapore, and the creator behind @thiriiiii. I film everyday life here the way my audience lives it: getting ready before class, brunch and late-night supper spots, weekend outfits, and trips around the region.",
+  // [capture] The 📍🇸🇬 in her TikTok bio.
+  location: "Singapore",
+  // [James] "Bilingual" is unconfirmed: ask which languages she films in.
   languages: [],
-  portrait: "",
+  // [capture] Cropped from a cover in her TikTok grid. Swap for a portrait she chooses.
+  portrait: "/work/portrait.jpg",
   socials: [
-    { platform: "instagram", handle: "@thiriiii_", url: "https://www.instagram.com/thiriiii_/" },
-    { platform: "tiktok", handle: "@thiriiiii", url: "https://www.tiktok.com/@thiriiiii" },
+    // [capture] Counts as displayed, 2026-11-12.
+    { platform: "tiktok", handle: "@thiriiiii", url: TIKTOK, followers: "62.3K" },
+    { platform: "instagram", handle: "@thiriiii_", url: "https://www.instagram.com/thiriiii_/", followers: "21.7K" },
   ],
-  pillars: [],
-  stats: [],
+  // [James] Pillars and portfolio tabs. [site] The times of day.
+  pillars: [
+    { id: "beauty", time: "08:00", tab: "Beauty & Hair", name: "Beauty, hair & skincare", description: "GRWMs, hair transformations, sensitive-skin routines and K-beauty demos." },
+    { id: "food", time: "12:30", tab: "F&B & Lifestyle", name: "Food, cafés & dining", description: "Aesthetic dining, brunch spots, late-night supper guides and local Singapore finds." },
+    { id: "fashion", time: "17:30", tab: "Fashion & E-commerce", name: "Fashion & accessories", description: "Class-to-weekend outfits, footwear and seasonal wear, plus hauls around the big sales." },
+    { id: "travel", time: "Weekend", tab: "Travel", name: "Travel & lifestyle", description: "Trips around the region, from Phuket and Phu Quoc to Sapa and Bangkok." },
+  ],
+  // [James] His three selling angles, [site] in the site's words.
+  angles: [
+    { title: "Hooks that stop the scroll.", body: "Transformations and transitions for hair, makeup and outfits, built around the first second." },
+    { title: "Local, so it converts.", body: "Singapore F&B, salons and retail launches, filmed the way people here actually find them." },
+    { title: "Fluent in the mega-sales.", body: "E-commerce and K-beauty campaigns around the big sales: hauls, demos and first looks." },
+  ],
+  // [capture] Brands named on her own covers and captions. Not proof of paid work.
+  featured: ["Glow Recipe", "OLENS", "Aestura", "Medicube", "SHEIN", "Soundpeats", "Montigo", "Taobao"],
+  // [James] Primary market.
+  market: "Singapore and Southeast Asia",
+  // [capture] As displayed, 2026-11-12.
+  stats: [
+    { value: "62.3K", label: "TikTok followers", source: "TikTok", asOf: "Nov 2026" },
+    { value: "594.1K", label: "TikTok likes", source: "TikTok", asOf: "Nov 2026" },
+    { value: "21.7K", label: "Instagram followers", source: "Instagram", asOf: "Nov 2026" },
+    { value: "1.5M", label: "Views on her top TikTok", source: "TikTok", asOf: "Nov 2026" },
+  ],
   audience: [],
-  videos: [],
-  brands: [],
+  // [capture] Covers cropped from her TikTok grid (provisional posters, for her approval)
+  // with the views shown under each. [site] Titles follow the cover text; the few
+  // covers without text get a plain description. [James] The three post URLs.
+  // Until her files arrive, each plays on TikTok or in the official embed.
+  videos: [
+    { id: "glow-recipe", pillar: "beauty", title: "GRWM with Glow Recipe", format: "grwm", brand: "Glow Recipe", poster: "/work/glow-recipe.jpg", ratio: "3/4", result: `40.5K ${VIEWS}`, href: TIKTOK, featured: true },
+    { id: "olens", pillar: "beauty", title: "OLENS Cherry Moon Brown", format: "review", brand: "OLENS", poster: "/work/olens.jpg", ratio: "3/4", result: `21.8K ${VIEWS}`, href: TIKTOK },
+    { id: "korean-makeover", pillar: "beauty", title: "Come with me to get a Korean makeover", format: "transformation", poster: "/work/korean-makeover.jpg", ratio: "3/4", result: `15.3K ${VIEWS}`, href: TIKTOK },
+    { id: "skincare", pillar: "beauty", title: "Lazy-girl skincare with Aestura", format: "tutorial", brand: "Aestura", poster: "/work/skincare.jpg", ratio: "3/4", result: `2,647 ${VIEWS}`, href: TIKTOK },
+    { id: "phuket-grwm", pillar: "beauty", title: "GRWM in Phuket: pink makeup", format: "grwm", poster: "/work/phuket-grwm.jpg", ratio: "3/4", result: `1,769 ${VIEWS}`, href: TIKTOK },
+    { id: "medicube", pillar: "beauty", title: "My Medicube undereye routine", format: "tutorial", brand: "Medicube", poster: "/work/medicube.jpg", ratio: "3/4", result: `802 ${VIEWS}`, href: TIKTOK },
+
+    { id: "campus-diml", pillar: "food", title: "A day in my life on campus", format: "vlog", embed: "https://www.tiktok.com/@thiriiiii/video/7683835885170871573" },
+    { id: "cafe-hopping", pillar: "food", title: "Café hopping", format: "vlog", poster: "/work/cafe-hopping.jpg", ratio: "3/4", result: `3,228 ${VIEWS}`, href: TIKTOK, featured: true },
+    { id: "korean-bbq", pillar: "food", title: "Korean barbecue", format: "vlog", poster: "/work/hotpot.jpg", ratio: "3/4", result: `18.6K ${VIEWS}`, href: TIKTOK },
+    { id: "korean-dinner", pillar: "food", title: "Korean comfort food", format: "vlog", poster: "/work/korean-dinner.jpg", ratio: "3/4", result: `6,317 ${VIEWS}`, href: TIKTOK },
+    { id: "korean-restaurant", pillar: "food", title: "A Korean restaurant, walked through", format: "walkthrough", poster: "/work/korean-restaurant.jpg", ratio: "3/4", result: `1,630 ${VIEWS}`, href: TIKTOK },
+
+    { id: "charles-keith", pillar: "fashion", title: "Charles & Keith", format: "lifestyle", brand: "Charles & Keith", embed: "https://www.tiktok.com/@thiriiiii/video/7688571066100321556" },
+    { id: "shein-polka", pillar: "fashion", title: "Polka-dot fits with SHEIN", format: "haul", brand: "SHEIN", poster: "/work/shein-polka.jpg", ratio: "3/4", result: `24.9K ${VIEWS}`, href: TIKTOK },
+    { id: "soundpeats", pillar: "fashion", title: "OOTD featuring Soundpeats Space", format: "lifestyle", brand: "Soundpeats", poster: "/work/soundpeats.jpg", ratio: "3/4", result: `15.9K ${VIEWS}`, href: TIKTOK },
+    { id: "shein-store", pillar: "fashion", title: "At the SHEIN store", format: "walkthrough", brand: "SHEIN", poster: "/work/shein-store.jpg", ratio: "3/4", result: `12.4K ${VIEWS}`, href: TIKTOK },
+    { id: "montigo", pillar: "fashion", title: "OOTD ft. Montigo Knight Tumbler", format: "lifestyle", brand: "Montigo", poster: "/work/montigo.jpg", ratio: "3/4", result: `10.3K ${VIEWS}`, href: TIKTOK },
+    { id: "k-beauty-sales", pillar: "fashion", title: "K-beauty with Lazada and Gmarket", format: "review", brand: "Lazada · Gmarket", embed: "https://www.instagram.com/p/Dfg51OlCdLC/" },
+    { id: "taobao-guide", pillar: "fashion", title: "My ultimate Taobao store guide", format: "review", brand: "Taobao", poster: "/work/taobao-guide.jpg", ratio: "3/4", result: `930 ${VIEWS}`, href: TIKTOK },
+    { id: "night-out", pillar: "fashion", title: "A night-out outfit", format: "lifestyle", poster: "/work/red-dress.jpg", ratio: "3/4", result: `817.5K ${VIEWS}`, href: TIKTOK },
+
+    { id: "clifftop", pillar: "travel", title: "Clifftop views", format: "vlog", poster: "/work/clifftop.jpg", ratio: "3/4", result: `53.6K ${VIEWS}`, href: TIKTOK },
+    { id: "bangkok", pillar: "travel", title: "When you cannot beat the traffic in Bangkok", format: "vlog", poster: "/work/bangkok.jpg", ratio: "3/4", result: `25.2K ${VIEWS}`, href: TIKTOK },
+    { id: "sapa", pillar: "travel", title: "Ho Chi Minh to Sapa, edited like a horror movie", format: "vlog", poster: "/work/sapa.jpg", ratio: "3/4", result: `11.7K ${VIEWS}`, href: TIKTOK },
+    { id: "island-boat", pillar: "travel", title: "An island boat day", format: "vlog", poster: "/work/phi-phi.jpg", ratio: "3/4", result: `7,529 ${VIEWS}`, href: TIKTOK },
+    { id: "phu-quoc", pillar: "travel", title: "A chaotic day in Phu Quoc", format: "vlog", poster: "/work/phu-quoc.jpg", ratio: "3/4", result: `2,244 ${VIEWS}`, href: TIKTOK },
+
+    // [capture] 1.5M views. The brief says her Juno Hair transformation passed 1.5M;
+    // nothing on this cover confirms it is that video, so it carries no title claim.
+    { id: "top-video", title: "My most-viewed TikTok", format: "lifestyle", poster: "/work/top-video.jpg", ratio: "3/4", result: `1.5M ${VIEWS}`, href: TIKTOK, featured: true },
+  ],
+  // [James] Her brand partners. None shows a paid-partnership label in the
+  // captures (only Aestura is named on a cover); confirm each one with Kate.
+  brands: [
+    { name: "Juno Hair Singapore" },
+    { name: "Novela SG" },
+    { name: "Sulwhasoo" },
+    { name: "Aestura" },
+    { name: "Innisfree" },
+    { name: "Charles & Keith" },
+    { name: "Rockfish Weatherwear" },
+    { name: "Lazada Singapore" },
+    { name: "Gmarket Global" },
+  ],
   caseStudies: [],
-  services: [],
-  packages: [],
+  // [James] What she offers.
+  services: [
+    { name: "Short-form video", description: "9:16, 15 to 45 seconds, for feeds and ads." },
+    { name: "Day-in-my-life integrations", description: "Your product, woven into a day in my life." },
+    { name: "Transformation and transition reels", description: "Hair, makeup and outfits, from before to after." },
+    { name: "Voiceover reviews and unboxings", description: "My voice over your product, from first look to verdict." },
+    { name: "Venue walkthroughs", description: "F&B, salons and retail pop-ups, the way you'd walk in." },
+    { name: "Lifestyle and product stills", description: "Photos for your feed, product pages and ads." },
+  ],
+  // [James] Rates on request until she sets them.
+  packages: [
+    { name: "Single video", description: "One 9:16 video.", includes: ["1 video"], price: "On request" },
+    { name: "3-video bundle", description: "Three videos, for testing hooks and angles.", includes: ["3 videos"], price: "On request", highlight: true },
+    { name: "Monthly retainer", description: "Ongoing content, every month.", includes: ["Videos every month"], price: "On request" },
+    { name: "Photography add-on", description: "Lifestyle and product stills, with any package.", includes: ["Stills"], price: "On request" },
+  ],
   usage: [],
   process: [],
   turnaround: "",
   testimonials: [],
   faq: [],
-  booking: { email: "" },
+  // [James] Her booking email; [capture] it is also in both bios. Publishing it on
+  // the site is her call before launch.
+  booking: { email: "katezheng39@gmail.com" },
 }
 
 /* -------------------------------------------------------------------------- */
@@ -146,79 +284,82 @@ export const content: Content = {
 /* -------------------------------------------------------------------------- */
 
 export const SAMPLE: Content = {
-  name: "Creator Name",
+  name: "Creator",
+  wordmark: "creator",
+  displayName: "Creator",
   handle: "@handle",
-  tagline: "SAMPLE: one line on what she makes, and for which brands.",
-  bio: "SAMPLE: two or three sentences in her own voice: what she films, who watches, and why brands come back.",
-  location: "SAMPLE: City",
-  languages: ["SAMPLE: Language one", "SAMPLE: Language two"],
-  portrait: "/samples/sample-3.jpg",
+  tagline: "One line on what she makes, and for which brands.",
+  bio: "A short hello in her own words: what she films, who watches, and why brands come back to her.",
+  location: "City",
+  languages: ["Language one", "Language two"],
+  portrait: "",
   socials: [
     { platform: "instagram", handle: "@handle", url: "https://www.instagram.com/" },
     { platform: "tiktok", handle: "@handle", url: "https://www.tiktok.com/" },
   ],
   pillars: [
-    { name: "SAMPLE: Pillar one", description: "SAMPLE: the kind of content, and the brands it suits.", videoIds: ["sample-1"] },
-    { name: "SAMPLE: Pillar two", description: "SAMPLE: the kind of content, and the brands it suits.", videoIds: ["sample-2"] },
-    { name: "SAMPLE: Pillar three", description: "SAMPLE: the kind of content, and the brands it suits.", videoIds: ["sample-3"] },
+    { id: "one", time: "08:00", tab: "Pillar one", name: "Pillar one", description: "The kind of content, and the brands it suits." },
+    { id: "two", time: "12:30", tab: "Pillar two", name: "Pillar two", description: "The kind of content, and the brands it suits." },
   ],
+  angles: [{ title: "A reason brands book her.", body: "One line on why it works." }],
+  featured: [],
+  market: "Market",
   stats: [
-    { value: "00K", label: "SAMPLE: TikTok followers", source: "TikTok analytics", asOf: "Month 2026" },
-    { value: "00K", label: "SAMPLE: Instagram followers", source: "Instagram insights", asOf: "Month 2026" },
-    { value: "0.0%", label: "SAMPLE: Average engagement", source: "Her analytics", asOf: "Month 2026" },
+    { value: "00K", label: "Followers", source: "Her analytics", asOf: "Month 2026" },
+    { value: "0.0%", label: "Average engagement", source: "Her analytics", asOf: "Month 2026" },
   ],
   audience: [
-    { value: "00%", label: "SAMPLE: Audience aged 18–34" },
-    { value: "00%", label: "SAMPLE: Top country" },
+    { value: "00%", label: "Audience aged 18–34" },
+    { value: "Country", label: "Top country" },
   ],
   videos: [
-    { id: "sample-1", title: "SAMPLE: Morning routine", format: "testimonial", brand: "Brand One", src: "/samples/sample-1.mp4", poster: "/samples/sample-1.jpg", duration: "0:04", featured: true },
-    { id: "sample-2", title: "SAMPLE: First look", format: "unboxing", brand: "Brand Two", src: "/samples/sample-2.mp4", poster: "/samples/sample-2.jpg", duration: "0:04" },
-    { id: "sample-3", title: "SAMPLE: Get ready with me", format: "grwm", brand: "Brand Three", src: "/samples/sample-3.mp4", poster: "/samples/sample-3.jpg", duration: "0:04" },
-    { id: "sample-4", title: "SAMPLE: How I use it", format: "tutorial", brand: "Brand Four", src: "/samples/sample-4.mp4", poster: "/samples/sample-4.jpg", duration: "0:04" },
-    { id: "sample-5", title: "SAMPLE: Embedded post", format: "voiceover", embed: "https://www.tiktok.com/@handle/video/0000000000000000000" },
+    { id: "sample-1", title: "Morning routine", format: "testimonial", brand: "Brand One", duration: "0:04", featured: true },
+    { id: "sample-2", title: "First look", format: "unboxing", brand: "Brand Two", duration: "0:04" },
+    { id: "sample-3", title: "Get ready with me", format: "grwm", brand: "Brand Three", duration: "0:04" },
+    { id: "sample-4", title: "How I use it", format: "tutorial", brand: "Brand Four", duration: "0:04" },
+    { id: "sample-5", title: "Three openings, one ad", format: "hooks", brand: "Brand Five", duration: "0:04" },
+    { id: "sample-6", title: "In her voice", format: "voiceover", brand: "Brand Six", duration: "0:04" },
+    { id: "sample-7", title: "An embedded post", format: "lifestyle", embed: "https://www.tiktok.com/@handle/video/0000000000000000000" },
   ],
-  brands: [{ name: "Brand One" }, { name: "Brand Two" }, { name: "Brand Three" }, { name: "Brand Four" }, { name: "Brand Five" }],
+  brands: [{ name: "Brand One" }, { name: "Brand Two" }, { name: "Brand Three" }, { name: "Brand Four" }, { name: "Brand Five" }, { name: "Brand Six" }],
   caseStudies: [
-    {
-      brand: "Brand One",
-      brief: "SAMPLE: what the brand asked for.",
-      delivered: "SAMPLE: what she made, in how many versions.",
-      result: "SAMPLE: a result from the brand's own numbers.",
-      videoId: "sample-1",
-    },
+    { brand: "Brand One", brief: "What the brand asked for.", delivered: "What she made, in how many versions.", result: "A result, from the brand's own numbers.", videoId: "sample-1" },
+    { brand: "Brand Two", brief: "What the brand asked for.", delivered: "What she made, in how many versions.", result: "A result, from the brand's own numbers.", videoId: "sample-2" },
   ],
   services: [
-    { name: "SAMPLE: UGC video", description: "SAMPLE: a scripted, filmed and edited vertical video.", includes: ["SAMPLE: script", "SAMPLE: captions", "SAMPLE: one revision"] },
-    { name: "SAMPLE: Hook variations", description: "SAMPLE: extra openings for the same video, for ad testing." },
-    { name: "SAMPLE: Voiceover", description: "SAMPLE: her voice over the brand's footage." },
-    { name: "SAMPLE: Photo set", description: "SAMPLE: stills for product pages and ads." },
-    { name: "SAMPLE: Raw footage", description: "SAMPLE: the unedited clips, for the brand's own editors." },
+    { name: "UGC video", description: "Scripted, filmed and edited for the brand's feed or ads.", includes: ["Script", "Captions", "One revision"] },
+    { name: "Hook variations", description: "New openings for the same video, for ad testing." },
+    { name: "Voiceover", description: "Her voice over the brand's own footage." },
+    { name: "Photo set", description: "Stills for product pages and ads." },
+    { name: "Raw footage", description: "The unedited clips, for the brand's editors." },
   ],
   packages: [
-    { name: "SAMPLE: One video", description: "SAMPLE: a single video.", includes: ["SAMPLE: 1 video", "SAMPLE: 1 hook"], price: "SAMPLE: On request" },
-    { name: "SAMPLE: Bundle", description: "SAMPLE: a set for testing.", includes: ["SAMPLE: 3 videos", "SAMPLE: 3 hooks"], price: "SAMPLE: On request", highlight: true },
-    { name: "SAMPLE: Monthly", description: "SAMPLE: an ongoing retainer.", includes: ["SAMPLE: videos a month"], price: "SAMPLE: On request" },
+    { name: "One video", description: "A single video and its hook.", includes: ["1 video", "1 hook"], price: "On request" },
+    { name: "The bundle", description: "A set for testing.", includes: ["3 videos", "3 hooks"], price: "On request", highlight: true },
+    { name: "Monthly", description: "An ongoing retainer.", includes: ["Videos every month"], price: "On request" },
   ],
   usage: [
-    { name: "SAMPLE: Organic", description: "SAMPLE: the brand posts it on its own accounts." },
-    { name: "SAMPLE: Paid ads", description: "SAMPLE: the brand runs it as an ad.", term: "SAMPLE: 30, 60 or 90 days" },
-    { name: "SAMPLE: Whitelisting", description: "SAMPLE: ads run from her handle.", term: "SAMPLE: per month" },
+    { name: "Organic", description: "The brand posts it on its own accounts.", price: "Included" },
+    { name: "Paid ads", description: "The brand runs it as an ad.", term: "30, 60 or 90 days", price: "On request" },
+    { name: "Whitelisting", description: "Ads run from her handle.", term: "Per month", price: "On request" },
   ],
   process: [
-    { title: "SAMPLE: Brief", description: "SAMPLE: the product, the audience, the must-says.", duration: "SAMPLE: day 1" },
-    { title: "SAMPLE: Script and hooks", description: "SAMPLE: a short script and hook options to approve." },
-    { title: "SAMPLE: Shoot", description: "SAMPLE: filmed once the product arrives." },
-    { title: "SAMPLE: Edit and deliver", description: "SAMPLE: captions, music-free versions, the formats asked for." },
-    { title: "SAMPLE: Revisions", description: "SAMPLE: how many rounds are included." },
+    { title: "Brief", description: "The product, the audience, the must-says.", duration: "Day 1" },
+    { title: "Script and hooks", description: "A short script and hook options to approve." },
+    { title: "Shoot", description: "Filmed once the product arrives." },
+    { title: "Edit and deliver", description: "Captions, clean versions, every format asked for." },
+    { title: "Revisions", description: "The rounds included, agreed up front." },
   ],
-  turnaround: "SAMPLE: e.g. 5 to 7 working days from product arrival",
-  testimonials: [{ quote: "SAMPLE: a line from a brand she has worked with.", name: "Name", role: "Role", brand: "Brand One" }],
+  turnaround: "a week from the product's arrival, or as agreed",
+  testimonials: [
+    { quote: "A line from a brand she has worked with goes here.", name: "Name", role: "Role", brand: "Brand One" },
+    { quote: "A second line, from another brand.", name: "Name", role: "Role", brand: "Brand Two" },
+  ],
   faq: [
-    { q: "SAMPLE: Do you need the product to film?", a: "SAMPLE: her answer." },
-    { q: "SAMPLE: Are usage rights included?", a: "SAMPLE: her answer." },
-    { q: "SAMPLE: How many revisions are included?", a: "SAMPLE: her answer." },
-    { q: "SAMPLE: Which languages do you film in?", a: "SAMPLE: her answer." },
+    { q: "Do you need the product to film?", a: "Her answer goes here." },
+    { q: "Are usage rights included?", a: "Her answer goes here." },
+    { q: "How many revisions are included?", a: "Her answer goes here." },
+    { q: "Which languages do you film in?", a: "Her answer goes here." },
   ],
-  booking: { email: "hello@example.com", responseTime: "SAMPLE: within a day" },
+  booking: { email: "hello@example.com", responseTime: "within a day" },
 }

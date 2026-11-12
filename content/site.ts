@@ -41,3 +41,6 @@ const resolved = resolve()
 export const site = resolved.data
 /** Slots currently showing SAMPLE stand-ins (shown in the preview badge). */
 export const sampledSlots = resolved.sampled
+
+/** Whether a slot is showing SAMPLE stand-ins; sections tag themselves with it. */
+export const isSampled = (key: Key) => resolved.sampled.includes(key)

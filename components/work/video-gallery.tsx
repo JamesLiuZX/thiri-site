@@ -23,7 +23,7 @@ export default function VideoGallery({ videos }: { videos: Video[] }) {
               type="button"
               aria-pressed={filter === format}
               onClick={() => setFilter(format)}
-              className={cn("chip", filter === format ? "border-fg bg-fg text-bg" : "hover:border-fg/40")}
+              className={cn("chip", filter === format ? "border-accent bg-accent text-accent-fg" : "hover:border-fg/40")}
             >
               {format === "all" ? "All" : FORMAT_LABELS[format]}
             </button>

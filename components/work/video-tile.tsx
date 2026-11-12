@@ -75,7 +75,7 @@ export default function VideoTile({
       type="button"
       onClick={() => onOpen(video, buttonRef.current)}
       aria-label={label}
-      className={cn("group relative block aspect-[9/16] w-full overflow-hidden rounded-2xl bg-line text-left", className)}
+      className={cn("group relative block w-full overflow-hidden rounded-[18px] bg-oat text-left shadow-print", video.ratio === "3/4" ? "aspect-[3/4]" : "aspect-[9/16]", className)}
     >
       {video.poster && <img src={video.poster} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />}
       {video.src && preview && (
@@ -85,18 +85,18 @@ export default function VideoTile({
         </video>
       )}
       {!video.poster && !video.src && (
-        <span className="absolute inset-0 grid place-items-center p-6 text-center text-sm text-muted">
-          {embed ? `Plays on ${embed.label}` : "No preview"}
+        <span className="absolute inset-0 grid place-items-center p-6 text-center font-display text-xl italic text-muted">
+          {embed ? `on ${embed.label}` : "No preview"}
         </span>
       )}
 
       <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent" />
-      <span aria-hidden="true" className="absolute left-3 top-3 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
+      <span aria-hidden="true" className="label absolute left-3 top-3 rounded-full bg-surface/85 px-2.5 py-1 text-[9px] text-fg backdrop-blur-sm">
         {FORMAT_LABELS[video.format]}
       </span>
       <span aria-hidden="true" className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-3 text-white">
         <span className="min-w-0">
-          <span className="block truncate text-sm font-medium">{video.brand ?? video.title}</span>
+          <span className="block truncate font-display text-[1.25rem] italic leading-tight">{video.brand ?? video.title}</span>
           {video.duration && <span className="text-xs text-white/70">{video.duration}</span>}
         </span>
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/90 text-black transition-transform duration-300 group-hover:scale-110">

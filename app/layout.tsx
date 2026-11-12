@@ -2,7 +2,7 @@ import { existsSync } from "node:fs"
 import { join } from "node:path"
 import type { ReactNode } from "react"
 import type { Metadata, Viewport } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Caveat, Cormorant, Hanken_Grotesk } from "next/font/google"
 import "./globals.css"
 import SmoothScroll from "@/components/smooth-scroll"
 import RevealRescan from "@/components/reveal-rescan"
@@ -11,12 +11,14 @@ import { site } from "@/content/site"
 import { REVEAL_BOOTSTRAP } from "@/lib/reveal-script"
 import { siteUrl } from "@/lib/site"
 
-// Phase 1 type: neutral. The chosen design direction replaces these, and
-// sets --font-display to its own face.
-const sans = Geist({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
-const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" })
+// Cormorant for display: light, high-contrast, with flowing italics.
+// Hanken Grotesk for text: warm, clean, quiet.
+const display = Cormorant({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-display", display: "swap" })
+const sans = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
+// A hand, used sparingly, for the notes and timestamps her own covers write by hand.
+const hand = Caveat({ subsets: ["latin"], variable: "--font-hand", display: "swap" })
 
-const title = `${site.name || site.handle}, UGC creator`
+const title = `${site.wordmark || site.handle}, UGC creator${site.location ? ` in ${site.location}` : ""}`
 const description = site.tagline || "UGC creator portfolio."
 // The social card is optional until the design direction renders one.
 const ogImage = existsSync(join(process.cwd(), "public", "og.png"))
@@ -25,16 +27,16 @@ const ogImage = existsSync(join(process.cwd(), "public", "og.png"))
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: title, template: `%s, ${site.name || site.handle}` },
+  title: { default: title, template: `%s, ${site.wordmark || site.handle}` },
   description,
-  openGraph: { type: "profile", url: "/", siteName: site.name || site.handle, title, description, images: ogImage },
+  openGraph: { type: "profile", url: "/", siteName: site.wordmark || site.handle, title, description, images: ogImage },
   twitter: { card: ogImage ? "summary_large_image" : "summary", title, description, images: ogImage?.map((image) => image.url) },
   // Closed to search engines until she approves the site (content/profile.ts).
   robots: launch.indexable ? { index: true, follow: true } : { index: false, follow: false },
 }
 
 export const viewport: Viewport = {
-  themeColor: "#faf9f7",
+  themeColor: "#faf8f5",
 }
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
@@ -43,7 +45,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <head>
         <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOTSTRAP }} />
       </head>
-      <body className={`${sans.variable} ${mono.variable} font-sans`} style={{ ["--font-display" as string]: "var(--font-sans)" }}>
+      <body className={`${sans.variable} ${display.variable} ${hand.variable} font-sans`}>
         <SmoothScroll>{children}</SmoothScroll>
         <RevealRescan />
       </body>

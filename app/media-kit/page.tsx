@@ -33,7 +33,8 @@ export default function MediaKit() {
         <header className="flex items-start justify-between gap-6 border-b-2 border-[#141416] pb-5">
           <div>
             <p className="text-[11px] uppercase tracking-[0.16em] text-[#55555b]">Media kit</p>
-            <h1 className="mt-1 text-[30px] font-semibold leading-none tracking-tight">{site.name || site.handle}</h1>
+            <h1 className="mt-1 font-display text-[40px] font-light italic leading-none">{site.wordmark || site.handle}</h1>
+            {site.name && <p className="mt-1 text-[12px] text-[#55555b]">{site.name}</p>}
             {site.tagline && <p className="mt-2 max-w-md text-[13px] text-[#33333a]">{site.tagline}</p>}
           </div>
           <div className="text-right text-[12px] leading-relaxed text-[#33333a]">
@@ -61,6 +62,19 @@ export default function MediaKit() {
           </Block>
         )}
 
+        {site.angles.length > 0 && (
+          <Block title="Why brands book me">
+            <ul className="grid grid-cols-3 gap-4 text-[12.5px]">
+              {site.angles.map((angle) => (
+                <li key={angle.title}>
+                  <p className="font-semibold">{angle.title}</p>
+                  <p className="text-[#33333a]">{angle.body}</p>
+                </li>
+              ))}
+            </ul>
+          </Block>
+        )}
+
         {site.bio && (
           <Block title="About">
             <p className="text-[13px] leading-[1.6]">{site.bio}</p>
@@ -70,9 +84,9 @@ export default function MediaKit() {
 
         {has(site.pillars) && (
           <Block title="Content pillars">
-            <ul className="grid grid-cols-3 gap-4 text-[12.5px]">
+            <ul className="grid grid-cols-2 gap-4 text-[12.5px]">
               {site.pillars.map((pillar) => (
-                <li key={pillar.name}>
+                <li key={pillar.id}>
                   <p className="font-semibold">{pillar.name}</p>
                   <p className="text-[#33333a]">{pillar.description}</p>
                 </li>
@@ -124,8 +138,14 @@ export default function MediaKit() {
         )}
 
         {has(site.brands) && (
-          <Block title="Brands">
+          <Block title="Trusted by">
             <p className="text-[13px]">{site.brands.map((brand) => brand.name).join(" · ")}</p>
+          </Block>
+        )}
+
+        {has(site.featured) && (
+          <Block title="Featured in my videos">
+            <p className="text-[13px]">{site.featured.join(" · ")}</p>
           </Block>
         )}
 
