@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Phase 1 placeholder: a neutral play mark. The design direction replaces it. -->
+  <rect width="64" height="64" rx="18" fill="#141416"/>
+  <path d="M26 20 L46 32 L26 44 Z" fill="#faf9f7"/>
+</svg>
